@@ -1,92 +1,59 @@
-# CLAUDE.md — epics/
+# Epics & Stories
 
-## Scopo di questa cartella
+## Structure
 
-Contiene le **specifiche complete** di ogni feature di BetonMe.
-Ogni epic descrive cosa fa una funzionalità, come si comporta, e quando è completa.
-
----
-
-## Struttura di un epic
-
-Ogni epic è un file markdown nella forma `epic-[XX]-[nome].md`.
+Each feature gets a folder:
 
 ```
-epics/
-├── epic-01-onboarding.md
-├── epic-02-dashboard.md
-├── epic-03-checkin.md
-├── epic-04-area-detail.md
-├── epic-05-add-edit-area.md
-├── epic-06-finance.md
-├── epic-07-settings.md
-└── ...
+epics/<feature-name>/
+├── epic.md           # The spec — what to build and why
+└── stories.md        # Stories = Lovable prompts, one per iteration
 ```
 
----
+**`epic.md`** contains: goal, how it works, requirements table (with priorities), user flows, design notes, technical considerations.
 
-## Cosa contiene un epic
+**`stories.md`** contains: stories grouped by Lovable prompt, with implementation sequence. Each story is an atomic prompt that Lovable can execute.
 
-Ogni file epic deve avere queste sezioni:
+A folder may have multiple story files if scope is large (e.g., `stories.md` + `stories-advanced.md` under fuel).
 
-```
-# Epic [XX] — [Nome]
+## How to Write Stories
 
-## Obiettivo
-Una frase: cosa risolve questa feature per l'utente.
+Stories become Lovable prompts. They must be **lean** — Lovable is good at deciding layout, design, and data model on its own.
 
-## Behavior
-Descrizione funzionale di come si comporta la feature.
-Flussi principali, interazioni, stati UI.
+**For each story, write:**
+- What the screen does and what information it collects
+- Behavior: navigation, validations, states (empty, error, success)
+- Exact copy where needed (labels, placeholders, messages)
+- Dependencies on other epics
 
-## Flussi
-Step-by-step dei percorsi utente principali.
+**Do NOT write:**
+- Layout, positions, spacing, alignment — Lovable does this better on its own
+- Data model or SQL — Lovable creates tables on its own
+- Component styling (padding, border-radius, specific colors) — the brand system is attached as context
+- CSS, dimensions, detailed mockups
 
-## Stati UI
-Lista degli stati visivi: vuoto, caricamento, errore, successo.
+**Structure of the Lovable prompt derived from the story:**
+1. Brief context (1-2 lines): what the app is, what we're building
+2. For each screen: what it does, what data it collects, behavior
+3. Notes only if there's something Lovable can't infer from context
 
-## Edge case
-Situazioni limite da gestire esplicitamente.
+> The brand system (`brand-system/brand-system.md`) and the PRD (`prd.md`) are attached as project context in Lovable, not copied into the prompt.
 
-## Acceptance criteria
-Lista di condizioni verificabili. La feature è completa quando tutti sono soddisfatti.
+## Adding a New Feature
 
-## Stories
-Lista delle stories collegate (link o riferimento).
-```
+1. **Ask the user** what the feature is, who it's for, and what problem it solves. Clarify scope before writing.
+2. **Create the folder:** `epics/<feature-name>/`
+3. **Write `epic.md`** — use existing epics as a template for structure and tone.
+4. **Ask the user** if they want stories written now or later.
+5. **If yes, write `stories.md`** with stories, acceptance criteria, and implementation sequence.
+6. **Update `prd.md`** — add the feature to the correct table (Core / Planned / Future) with a link.
+7. **Update cross-references** — if the new epic relates to existing ones, add links in both directions.
 
----
+## Conventions
 
-## Struttura di una story
-
-Le stories sono task atomici — una sola azione, implementabile in un singolo prompt Lovable.
-
-Formato file: `story-[epic-XX]-[numero]-[nome].md`
-
-```
-# Story [epic-XX]-[N] — [Titolo]
-
-## Contesto
-A quale epic appartiene e perché esiste questa story.
-
-## Azione
-Cosa deve fare Lovable in questa story. Una sola cosa.
-
-## Acceptance criteria
-2-4 condizioni verificabili e specifiche.
-
-## Note UI
-Riferimenti a token di brand, componenti, copy esatti se rilevanti.
-```
-
----
-
-## Regole
-
-- Un epic = una feature o un blocco funzionale coeso
-- Una story = un task atomico eseguibile in un prompt
-- Non scrivere codice negli epic — descrivi il behavior
-- Non duplicare informazioni già nel brand system — fai riferimento a `brand-system/`
-- Se una story diventa troppo grande → spezzala in due
-- Numerazione epic: sequenziale, con zero padding (`01`, `02`...)
-- Numerazione stories: per epic (`epic-01` → `story-01-01`, `story-01-02`...)
+- JIRA vocabulary: **PRD** (macro), **Epics** (features), **Stories** (implementation units = Lovable prompts).
+- Epic headers use `**Epic:**` (not "Feature").
+- Links between epics: `[Country Profiles](../country-profiles/epic.md)`.
+- Links from PRD to epics: `[epics/onboarding/epic.md](epics/onboarding/epic.md)`.
+- Factual and direct. No filler. Tables for requirements, code blocks for user flows.
+- When editing an epic, check if `prd.md` or other epics need link updates.
