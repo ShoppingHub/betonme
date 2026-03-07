@@ -1,0 +1,142 @@
+# Epic 10 — Areas (Sezione Aree)
+
+## Obiettivo
+Offrire all'utente una visione organizzata delle proprie aree di vita raggruppate per macro-categoria, con accesso rapido alla creazione di nuove aree e alla visualizzazione del dettaglio.
+
+---
+
+## Behavior
+
+La schermata Areas mostra le 4 macro-aree come sezioni distinte. All'interno di ogni sezione compaiono le aree che l'utente ha creato per quella categoria. Se non esistono aree per una macro-categoria, la sezione mostra un micro empty state con CTA per aggiungere.
+
+Le macro-aree sono sempre visibili — anche se vuote — per aiutare l'utente a capire come è strutturata la sua osservazione.
+
+---
+
+## Macro-aree
+
+| Tipo | Label IT | Label EN | Icona Lucide |
+|---|---|---|---|
+| `health` | Salute | Health | `Heart` |
+| `study` | Studio | Study | `BookOpen` |
+| `reduce` | Riduci | Reduce | `TrendingDown` |
+| `finance` | Finanze | Finance | `Wallet` |
+
+---
+
+## Layout
+
+```
+┌─────────────────────────────┐
+│ Aree / Areas          [+ ]  │  ← Header con CTA globale
+├─────────────────────────────┤
+│                             │
+│  ♥ Salute / Health          │  ← Macro-area header
+│  ┌─────────────────────┐    │
+│  │ Palestra     →      │    │  ← Area card (tap → Area Detail)
+│  │ Camminata    →      │    │
+│  └─────────────────────┘    │
+│  [+ Aggiungi]               │  ← CTA add area di questo tipo
+│                             │
+│  📖 Studio / Study          │
+│  (vuoto)                    │
+│  [+ Aggiungi]               │
+│                             │
+│  📉 Riduci / Reduce         │
+│  ┌─────────────────────┐    │
+│  │ Social media  →     │    │
+│  └─────────────────────┘    │
+│  [+ Aggiungi]               │
+│                             │
+│  💰 Finanze / Finance       │
+│  ┌─────────────────────┐    │
+│  │ Risparmio    →      │    │
+│  └─────────────────────┘    │
+│  [+ Aggiungi]               │
+│                             │
+├─────────────────────────────┤
+│  [Nav]                      │
+└─────────────────────────────┘
+```
+
+---
+
+## Specifiche Area Card (nella lista)
+
+| Proprietà | Valore |
+|---|---|
+| Layout | Riga orizzontale: nome area a sinistra, chevron a destra |
+| Background | `bg-[#1F4A50] rounded-lg` |
+| Altezza riga | min 48px (touch target) |
+| Tap | Naviga ad Area Detail |
+| Stato archiviato | Non mostrato (filtro lato query) |
+
+---
+
+## CTA Aggiungi
+
+- Label IT: `+ Aggiungi` / Label EN: `+ Add`
+- Stile: link testuale piccolo, `text-[#7DA3A0]`
+- Tap: naviga ad Add Area (Epic 05) con tipo pre-selezionato
+
+## CTA Header (globale)
+
+- Icona `+` in alto a destra nell'header
+- Tap: naviga ad Add Area senza pre-selezione del tipo
+
+---
+
+## Stati UI
+
+### Macro-area senza aree
+```
+Nessuna card — solo la CTA "+ Aggiungi / + Add"
+```
+
+### Macro-area con aree
+```
+Lista card + CTA in fondo alla sezione
+```
+
+### Loading
+```
+Skeleton animate-pulse per ogni sezione
+```
+
+---
+
+## Edge Case
+
+- Utente senza nessuna area → tutte le sezioni mostrano il micro empty state con CTA
+- Area archiviata → non compare nella lista (filtrata in query)
+- Nome area molto lungo → troncato con `text-ellipsis overflow-hidden`
+- Più di 5 aree per macro-categoria → scroll verticale naturale della pagina
+
+---
+
+## Acceptance Criteria
+
+- [ ] Le 4 macro-aree sono sempre visibili anche se vuote
+- [ ] Ogni macro-area mostra le aree dell'utente di quel tipo
+- [ ] Le aree archiviate non compaiono
+- [ ] La CTA "+ Aggiungi / + Add" apre Add Area con tipo pre-selezionato
+- [ ] Il tap su un'area card naviga ad Area Detail
+- [ ] La CTA header apre Add Area senza pre-selezione
+- [ ] Il loading state mostra skeleton animate-pulse
+- [ ] Le label delle macro-aree seguono la lingua selezionata (Epic 08)
+
+---
+
+## Dipendenze
+
+- Epic 05 (Add/Edit Area) — per la navigazione al form
+- Epic 04 (Area Detail) — per la navigazione al dettaglio
+- Epic 08 (i18n) — per le label in IT/EN
+
+---
+
+## Stories
+
+- `story-10-01` — Layout sezione Aree con 4 macro-categorie e liste area
+- `story-10-02` — CTA aggiungi per tipo + CTA globale header
+- `story-10-03` — Stati empty, loading e area archiviata

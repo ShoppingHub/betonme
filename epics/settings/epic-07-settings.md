@@ -17,8 +17,10 @@ I salvataggi sono silenziosi — nessun toast, nessun messaggio di conferma per 
 
 | Setting | Tipo | Default | Note |
 |---|---|---|---|
+| Lingua / Language | Segmented control IT/EN | Rilevata da browser | Epic 08 |
 | Show trajectory score | Toggle | OFF | Mostra il punteggio numerico nell'Area Detail |
 | Notifications | Toggle | ON | Logica push rinviata al post-MVP |
+| Menu personalizzato | Selezione (max 2 voci) | Nessuna | Vedi sezione Menu |
 | Account email | Testo (read-only) | — | Non modificabile |
 | Sign out | Bottone | — | |
 | Delete account | Bottone distruttivo | — | Richiede conferma |
@@ -26,6 +28,23 @@ I salvataggi sono silenziosi — nessun toast, nessun messaggio di conferma per 
 ---
 
 ## Flussi
+
+### Selezione Lingua
+1. L'utente tappa il segmented control `Italiano · English`
+2. La UI si aggiorna immediatamente nella nuova lingua (senza reload)
+3. La preferenza `language` viene salvata su Supabase (silenzioso)
+4. Vedi Epic 08 per il comportamento completo
+
+### Configurazione Menu (voci personalizzabili)
+1. L'utente vede la sezione "Menu" con un elenco delle voci disponibili
+2. Le 3 voci fisse (Home · Aree · Impostazioni) sono indicate come non modificabili
+3. L'utente può attivare al massimo 2 slot aggiuntivi scegliendo tra le opzioni disponibili
+4. Le opzioni disponibili dipendono dalla configurazione dell'utente:
+   - `Finanze / Finance` — sempre disponibile
+   - `Palestra / Gym` — disponibile solo se l'utente ha almeno un'area di tipo `health` con nome `gym` o `palestra`
+5. L'attivazione/disattivazione di una voce aggiorna il menu di navigazione immediatamente
+6. Se l'utente ha 2 voci già attive e prova ad attivarne una terza → la terza rimane disabilitata (non selezionabile)
+7. Salvataggio silenzioso su Supabase (colonna `menu_custom_items` in tabella `users`)
 
 ### Toggle "Show trajectory score"
 1. L'utente attiva il toggle
@@ -58,22 +77,31 @@ I salvataggi sono silenziosi — nessun toast, nessun messaggio di conferma per 
 
 ```
 ┌─────────────────────────────┐
-│ Settings                    │  ← Header
+│ Impostazioni / Settings     │  ← Header
 ├─────────────────────────────┤
 │                             │
-│  Show trajectory score  [○] │  ← Toggle (default OFF)
+│  Preferenze                 │  ← Label sezione
+│  Lingua  [Italiano│English] │  ← Segmented control
+│  Punteggio traiettoria  [○] │  ← Toggle (default OFF)
+│  Notifiche              [●] │  ← Toggle (default ON)
 │                             │
-│  Notifications          [●] │  ← Toggle (default ON)
+│  Menu                       │  ← Label sezione
+│  Home           (fisso) ──  │  ← Non modificabile
+│  Aree           (fisso) ──  │  ← Non modificabile
+│  Impostazioni   (fisso) ──  │  ← Non modificabile
+│  Finanze        [○]         │  ← Toggle slot custom (max 2 attivi)
+│  Palestra       [○]         │  ← Visibile solo se area Gym esiste
 │                             │
 │  Account                    │  ← Label sezione
 │  user@email.com             │  ← Email read-only, text-[#B9C0C1]
 │                             │
-│  [Sign out]                 │  ← Bottone standard
+│  [Esci / Sign out]          │  ← Bottone standard
 │                             │
-│  [Delete account]           │  ← Bottone distruttivo
+│  [Elimina account /         │  ← Bottone distruttivo
+│   Delete account]           │
 │                             │
 ├─────────────────────────────┤
-│  Home · Areas · Finance · ⚙ │
+│  [Nav]                      │
 └─────────────────────────────┘
 ```
 
@@ -114,33 +142,58 @@ Cancel:  "Cancel"              ← testo neutro, chiude il modale
 
 ---
 
+## Database
+
+Aggiungere colonne alla tabella `users`:
+```
+language           TEXT    DEFAULT 'en'  CHECK (language IN ('it', 'en'))
+menu_custom_items  TEXT[]  DEFAULT '{}'  -- array di max 2 valori: 'finance', 'gym'
+```
+
+---
+
 ## Acceptance Criteria
 
-- [ ] La schermata mostra esattamente i 5 elementi specificati (2 toggle, email, sign out, delete)
+- [ ] Il selettore lingua appare come primo elemento della sezione Preferenze
+- [ ] Il cambio lingua aggiorna la UI immediatamente e salva `language` su Supabase
 - [ ] Il toggle "Show trajectory score" aggiorna `settings_score_visible` su Supabase
 - [ ] Il salvataggio dei toggle è silenzioso (nessun toast)
-- [ ] "Sign out" termina la sessione e redirige all'onboarding
-- [ ] "Delete account" apre il modale con il copy esatto specificato
+- [ ] La sezione Menu mostra le 3 voci fisse (non modificabili) e le voci custom disponibili
+- [ ] Massimo 2 voci custom possono essere attivate simultaneamente
+- [ ] La voce `Palestra / Gym` appare nella sezione Menu solo se esiste un'area health con nome gym/palestra
+- [ ] L'attivazione/disattivazione di una voce custom aggiorna il menu di navigazione immediatamente
+- [ ] `menu_custom_items` viene salvato su Supabase (silenzioso)
+- [ ] "Esci / Sign out" termina la sessione e redirige al login
+- [ ] "Elimina account / Delete account" apre il modale con il copy esatto specificato
 - [ ] "Delete permanently" elimina account e dati con cascade
 - [ ] Il modale ha CTA distruttiva in `#E24A4A`
 - [ ] Dopo il delete, redirect alla schermata non autenticata senza messaggi
+- [ ] Tutti i label seguono la lingua selezionata
 
 ---
 
 ## Copy UI
 
-| Elemento | Stringa |
-|---|---|
-| Header | `"Settings"` |
-| Label toggle score | `"Show trajectory score"` |
-| Label toggle notifiche | `"Notifications"` |
-| Label sezione account | `"Account"` |
-| Bottone sign out | `"Sign out"` |
-| Bottone delete | `"Delete account"` |
-| Titolo modale | `"Delete account"` |
-| Corpo modale | `"This will permanently delete all your observation history. This cannot be undone."` |
-| CTA modale confirm | `"Delete permanently"` |
-| CTA modale cancel | `"Cancel"` |
+| Elemento | IT | EN |
+|---|---|---|
+| Header | `"Impostazioni"` | `"Settings"` |
+| Label sezione preferenze | `"Preferenze"` | `"Preferences"` |
+| Label lingua | `"Lingua"` | `"Language"` |
+| Label toggle score | `"Mostra punteggio"` | `"Show trajectory score"` |
+| Label toggle notifiche | `"Notifiche"` | `"Notifications"` |
+| Label sezione menu | `"Menu"` | `"Menu"` |
+| Label voce fissa Home | `"Home"` | `"Home"` |
+| Label voce fissa Aree | `"Aree"` | `"Areas"` |
+| Label voce fissa Settings | `"Impostazioni"` | `"Settings"` |
+| Label voce custom Finance | `"Finanze"` | `"Finance"` |
+| Label voce custom Gym | `"Palestra"` | `"Gym"` |
+| Label sezione account | `"Account"` | `"Account"` |
+| Bottone sign out | `"Esci"` | `"Sign out"` |
+| Bottone delete | `"Elimina account"` | `"Delete account"` |
+| Titolo modale | `"Elimina account"` | `"Delete account"` |
+| Corpo modale | `"Eliminerà definitivamente tutto il tuo storico. Questa azione è irreversibile."` | `"This will permanently delete all your observation history. This cannot be undone."` |
+| CTA modale confirm | `"Elimina definitivamente"` | `"Delete permanently"` |
+| CTA modale cancel | `"Annulla"` | `"Cancel"` |
 
 ---
 
@@ -152,9 +205,19 @@ Cancel:  "Cancel"              ← testo neutro, chiude il modale
 
 ---
 
+## Dipendenze
+
+- Epic 08 (i18n) — per la logica lingua e i label IT/EN
+- Epic 09 (Layout) — il menu configurato qui alimenta la navigazione desktop e mobile
+- Epic 11 (Gym) — la voce `Palestra / Gym` nel menu è condizionale all'esistenza dell'area
+
+---
+
 ## Stories
 
-- `story-07-01` — Layout Settings con toggle e sezione account
-- `story-07-02` — Logica toggle score e salvataggio su Supabase
-- `story-07-03` — Sign out con redirect
-- `story-07-04` — Delete account con modale di conferma e cascade
+- `story-07-01` — Layout Settings con sezioni Preferenze, Menu, Account
+- `story-07-02` — Selettore lingua IT/EN con aggiornamento UI immediato
+- `story-07-03` — Logica toggle score e salvataggio su Supabase
+- `story-07-04` — Sezione Menu: voci fisse + max 2 slot custom configurabili
+- `story-07-05` — Sign out con redirect
+- `story-07-06` — Delete account con modale di conferma e cascade
