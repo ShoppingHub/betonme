@@ -44,21 +44,32 @@ betonme/
 ├── epics/
 │   ├── CLAUDE.md                    ← regole per epic, stories e nuove feature
 │   ├── auth/
-│   │   └── epic-00-auth.md
+│   │   ├── epic-00-auth.md
+│   │   └── stories.md
 │   ├── onboarding/
-│   │   └── epic-01-onboarding.md
+│   │   ├── epic-01-onboarding.md
+│   │   └── stories.md
 │   ├── dashboard/
-│   │   └── epic-02-dashboard.md
+│   │   ├── epic-02-dashboard.md
+│   │   └── stories.md
 │   ├── checkin/
-│   │   └── epic-03-checkin.md
+│   │   ├── epic-03-checkin.md
+│   │   └── stories.md
 │   ├── area_detail/
-│   │   └── epic-04-area-detail.md
+│   │   ├── epic-04-area-detail.md
+│   │   └── stories.md
 │   ├── edit_area/
-│   │   └── epic-05-add-edit-area.md
+│   │   ├── epic-05-add-edit-area.md
+│   │   └── stories.md
 │   ├── finance/
-│   │   └── epic-06-finance.md
+│   │   ├── epic-06-finance.md
+│   │   └── stories.md
 │   └── settings/
-│       └── epic-07-settings.md
+│       ├── epic-07-settings.md
+│       └── stories.md
+│
+├── lovable/
+│   └── prompt-iniziale.md           ← prompt di setup iniziale per Lovable
 │
 ├── roadmap/                         ← priorità e milestone
 └── prototypes/                      ← riferimenti visivi
