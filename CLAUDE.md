@@ -43,6 +43,8 @@ betonme/
 │
 ├── epics/
 │   ├── CLAUDE.md                    ← regole per epic, stories e nuove feature
+│   ├── auth/
+│   │   └── epic-00-auth.md
 │   ├── onboarding/
 │   │   └── epic-01-onboarding.md
 │   ├── dashboard/
