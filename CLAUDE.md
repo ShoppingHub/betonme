@@ -33,14 +33,33 @@ Non entrare nel dettaglio tecnico dell'implementazione. Specifica il behavior, n
 
 ```
 betonme/
-├── CLAUDE.md                  ← questo file
-├── prd/                       ← piano prodotto (snello, solo mappa)
-├── epics/                     ← specifiche complete per feature
-│   └── CLAUDE.md              ← regole per epic e stories
-├── brand-system/              ← design tokens, tono di voce, regole UI
-│   └── CLAUDE.md              ← quali file consultare e quando
-├── roadmap/                   ← priorità e milestone
-└── prototypes/                ← riferimenti visivi
+├── CLAUDE.md                        ← questo file
+├── prd.md                           ← mappa prodotto (snello, solo feature map)
+│
+├── brand-system/
+│   ├── CLAUDE.md                    ← regole d'uso del brand system
+│   ├── brand_system.md              ← fonte primaria design tokens e regole UI
+│   └── brand_system.html            ← riferimento visivo interattivo
+│
+├── epics/
+│   ├── CLAUDE.md                    ← regole per epic, stories e nuove feature
+│   ├── onboarding/
+│   │   └── epic-01-onboarding.md
+│   ├── dashboard/
+│   │   └── epic-02-dashboard.md
+│   ├── checkin/
+│   │   └── epic-03-checkin.md
+│   ├── area_detail/
+│   │   └── epic-04-area-detail.md
+│   ├── edit_area/
+│   │   └── epic-05-add-edit-area.md
+│   ├── finance/
+│   │   └── epic-06-finance.md
+│   └── settings/
+│       └── epic-07-settings.md
+│
+├── roadmap/                         ← priorità e milestone
+└── prototypes/                      ← riferimenti visivi
 ```
 
 ---
@@ -59,7 +78,7 @@ betonme/
 
 ## Regole operative
 
-- Quando aggiungiamo una cartella o cambiamo la struttura del repo → chiedi se aggiornare questo file
+- Quando aggiungiamo una cartella o cambiamo la struttura del repo → aggiorna questo file
 - I file `CLAUDE-v1.md`, `CLAUDE-v2.md`, `CLAUDE-v3.md`, `CLAUDE-v4.md` vanno ignorati
 - Parla sempre in **italiano**
 - Per le regole di brand e design, consulta `brand-system/CLAUDE.md`
@@ -69,7 +88,7 @@ betonme/
 
 ## Riferimenti chiave
 
-- PRD principale: `prd/betonme_prd_lovable.md`
-- Brand system: `brand-system/betonme_brand_system_lovable.md`
-- Anti-pattern UI: vedi sezione 10 del brand system — rispettarli sempre
+- PRD principale: `prd.md`
+- Brand system: `brand-system/brand_system.md`
+- Anti-pattern UI: sezione 10 del brand system — rispettarli sempre
 - Tono di voce: mai valutativo, mai motivazionale — solo osservativo
