@@ -64,8 +64,20 @@ betonme/
 │   ├── finance/
 │   │   ├── epic-06-finance.md
 │   │   └── stories.md
-│   └── settings/
-│       ├── epic-07-settings.md
+│   ├── settings/
+│   │   ├── epic-07-settings.md
+│   │   └── stories.md
+│   ├── i18n/
+│   │   ├── epic-08-i18n.md          ← lingua IT/EN
+│   │   └── stories.md
+│   ├── layout/
+│   │   ├── epic-09-layout.md        ← mobile bottom nav · desktop sidebar
+│   │   └── stories.md
+│   ├── areas/
+│   │   ├── epic-10-areas.md         ← sezione aree con 4 macro-categorie
+│   │   └── stories.md
+│   └── gym/
+│       ├── epic-11-gym.md           ← gym card / scheda palestra
 │       └── stories.md
 │
 ├── lovable/
