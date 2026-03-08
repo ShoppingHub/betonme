@@ -99,17 +99,33 @@ language  TEXT  DEFAULT 'en'  CHECK (language IN ('it', 'en'))
 
 ## Acceptance Criteria
 
-- [ ] Il selettore lingua appare nelle Impostazioni come primo elemento della sezione Preferenze
-- [ ] Al cambio lingua la UI si aggiorna senza reload
-- [ ] La preferenza `language` viene salvata su Supabase
-- [ ] Al riavvio dell'app la lingua salvata è applicata correttamente
-- [ ] Il browser in `it-*` usa IT come default; tutti gli altri usano EN
-- [ ] Nessun testo rimane nella lingua precedente dopo il cambio
+- [x] Il selettore lingua appare nelle Impostazioni come primo elemento della sezione Preferenze
+- [x] Al cambio lingua la UI si aggiorna senza reload
+- [x] La preferenza `language` viene salvata su Supabase
+- [x] Al riavvio dell'app la lingua salvata è applicata correttamente
+- [x] Il browser in `it-*` usa IT come default; tutti gli altri usano EN
+- [x] Nessun testo rimane nella lingua precedente dopo il cambio
+
+---
+
+## Stato implementazione
+
+**Completato** — commit su `ShoppingHub/project-spark`.
+
+| Componente | File |
+|---|---|
+| Context + hook | `src/hooks/useI18n.tsx` — provider con `locale`, `setLocale()`, `t()` |
+| Traduzioni | `src/i18n/translations.ts` — ~120+ chiavi IT/EN |
+| Migrazione DB | `20260307164834` — colonna `language TEXT DEFAULT 'en'` su `users` |
+| Persistenza | `localStorage` per hydration istantanea + sync Supabase |
+
+### Variazioni rispetto all'epic
+- Il selettore in Settings usa bottoni segmented custom (non il componente `<TimeRangeSelector>` riusato), ma il behavior è identico
 
 ---
 
 ## Stories
 
-- `story-08-01` — Selettore lingua in Settings + salvataggio su Supabase
-- `story-08-02` — Rilevamento lingua dal browser al primo accesso
-- `story-08-03` — Traduzione completa IT/EN di tutti i testi dell'app
+- `story-08-01` — Selettore lingua in Settings + salvataggio su Supabase — **completata**
+- `story-08-02` — Rilevamento lingua dal browser al primo accesso — **completata**
+- `story-08-03` — Traduzione completa IT/EN di tutti i testi dell'app — **completata**

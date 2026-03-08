@@ -1,13 +1,13 @@
 # Stories — Epic 02 — Dashboard
 
-## Sequenza di implementazione
+## Sequenza di implementazione — ✅ tutte completate
 
 ```
-story-02-01 → Layout Dashboard: header + grafico aggregato totale
-story-02-02 → MacroAreaSelector: filtro per macro-area
-story-02-03 → TimeRangeSelector con animazione Framer Motion
-story-02-04 → Empty state
-story-02-05 → Loading skeleton
+story-02-01 → Layout Dashboard: header + grafico aggregato totale             ✅
+story-02-02 → MacroAreaSelector: filtro per macro-area                        ✅
+story-02-03 → TimeRangeSelector con animazione Framer Motion                  ✅
+story-02-04 → Empty state                                                     ✅
+story-02-05 → Loading skeleton                                                ✅
 ```
 
 > **Dipendenze:** Richiede Epic 00 (auth) e Epic 01 (onboarding) completati. I dati arrivano dalla tabella `areas` e `score_daily` di Supabase.

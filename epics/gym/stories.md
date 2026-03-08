@@ -1,12 +1,12 @@
 # Stories — Epic 11 — Gym Card (Scheda Palestra)
 
-## Sequenza di implementazione
+## Sequenza di implementazione — ✅ tutte completate
 
 ```
-story-11-01 → Rilevamento area Gym/Palestra e rendering sezione Gym Card
-story-11-02 → Aggiunta esercizio via bottom sheet e lista sessione di oggi
-story-11-03 → Modifica ed eliminazione esercizio
-story-11-04 → Storico sessioni collassabile
+story-11-01 → Rilevamento area Gym/Palestra e rendering sezione Gym Card      ✅
+story-11-02 → Aggiunta esercizio via bottom sheet e lista sessione di oggi    ✅
+story-11-03 → Modifica ed eliminazione esercizio                              ✅
+story-11-04 → Storico sessioni collassabile                                   ✅
 ```
 
 > **Dipendenze:** Richiede Epic 03 (Check-in) per il completamento automatico. Epic 04 (Area Detail) per la posizione della sezione. Epic 08 (i18n) per i label.

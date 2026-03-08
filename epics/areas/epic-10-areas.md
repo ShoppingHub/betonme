@@ -116,14 +116,31 @@ Skeleton animate-pulse per ogni sezione
 
 ## Acceptance Criteria
 
-- [ ] Le 4 macro-aree sono sempre visibili anche se vuote
-- [ ] Ogni macro-area mostra le aree dell'utente di quel tipo
-- [ ] Le aree archiviate non compaiono
-- [ ] La CTA "+ Aggiungi / + Add" apre Add Area con tipo pre-selezionato
-- [ ] Il tap su un'area card naviga ad Area Detail
-- [ ] La CTA header apre Add Area senza pre-selezione
-- [ ] Il loading state mostra skeleton animate-pulse
-- [ ] Le label delle macro-aree seguono la lingua selezionata (Epic 08)
+- [x] Le 4 macro-aree sono sempre visibili anche se vuote
+- [x] Ogni macro-area mostra le aree dell'utente di quel tipo
+- [x] Le aree archiviate non compaiono
+- [x] La CTA "+ Aggiungi / + Add" apre Add Area con tipo pre-selezionato
+- [x] Il tap su un'area card naviga ad Area Detail
+- [x] La CTA header apre Add Area senza pre-selezione
+- [x] Il loading state mostra skeleton animate-pulse
+- [x] Le label delle macro-aree seguono la lingua selezionata (Epic 08)
+
+---
+
+## Stato implementazione
+
+**Completato** — commit su `ShoppingHub/project-spark`.
+
+| Componente | File |
+|---|---|
+| Pagina Aree | `src/pages/Areas.tsx` — 4 sezioni con icone Heart/BookOpen/TrendingDown/Wallet |
+
+### Dettagli
+- Filtro `.is("archived_at", null)` applicato correttamente
+- CTA per tipo con query param `?type=<type>` su `/areas/new`
+- CTA globale header con icona `+` → `/areas/new` senza pre-selezione
+- Area card: `bg-[#1F4A50] rounded-lg`, nome + chevron, min-h 48px
+- Demo mode supportato
 
 ---
 
@@ -137,6 +154,6 @@ Skeleton animate-pulse per ogni sezione
 
 ## Stories
 
-- `story-10-01` — Layout sezione Aree con 4 macro-categorie e liste area
-- `story-10-02` — CTA aggiungi per tipo + CTA globale header
-- `story-10-03` — Stati empty, loading e area archiviata
+- `story-10-01` — Layout sezione Aree con 4 macro-categorie e liste area — **completata**
+- `story-10-02` — CTA aggiungi per tipo + CTA globale header — **completata**
+- `story-10-03` — Stati empty, loading e area archiviata — **completata**

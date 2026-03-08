@@ -154,21 +154,39 @@ menu_custom_items  TEXT[]  DEFAULT '{}'  -- array di max 2 valori: 'finance', 'g
 
 ## Acceptance Criteria
 
-- [ ] Il selettore lingua appare come primo elemento della sezione Preferenze
-- [ ] Il cambio lingua aggiorna la UI immediatamente e salva `language` su Supabase
-- [ ] Il toggle "Show trajectory score" aggiorna `settings_score_visible` su Supabase
-- [ ] Il salvataggio dei toggle è silenzioso (nessun toast)
-- [ ] La sezione Menu mostra le 3 voci fisse (non modificabili) e le voci custom disponibili
-- [ ] Massimo 2 voci custom possono essere attivate simultaneamente
-- [ ] La voce `Palestra / Gym` appare nella sezione Menu solo se esiste un'area health con nome gym/palestra
-- [ ] L'attivazione/disattivazione di una voce custom aggiorna il menu di navigazione immediatamente
-- [ ] `menu_custom_items` viene salvato su Supabase (silenzioso)
-- [ ] "Esci / Sign out" termina la sessione e redirige al login
-- [ ] "Elimina account / Delete account" apre il modale con il copy esatto specificato
-- [ ] "Delete permanently" elimina account e dati con cascade
-- [ ] Il modale ha CTA distruttiva in `#E24A4A`
-- [ ] Dopo il delete, redirect alla schermata non autenticata senza messaggi
-- [ ] Tutti i label seguono la lingua selezionata
+- [x] Il selettore lingua appare come primo elemento della sezione Preferenze
+- [x] Il cambio lingua aggiorna la UI immediatamente e salva `language` su Supabase
+- [x] Il toggle "Show trajectory score" aggiorna `settings_score_visible` su Supabase
+- [x] Il salvataggio dei toggle è silenzioso (nessun toast)
+- [x] La sezione Menu mostra le 3 voci fisse (non modificabili) e le voci custom disponibili
+- [x] Massimo 2 voci custom possono essere attivate simultaneamente
+- [x] La voce `Palestra / Gym` appare nella sezione Menu solo se esiste un'area health con nome gym/palestra
+- [x] L'attivazione/disattivazione di una voce custom aggiorna il menu di navigazione immediatamente
+- [x] `menu_custom_items` viene salvato su Supabase (silenzioso)
+- [x] "Esci / Sign out" termina la sessione e redirige al login
+- [x] "Elimina account / Delete account" apre il modale con il copy esatto specificato
+- [x] "Delete permanently" elimina account e dati con cascade
+- [x] Il modale ha CTA distruttiva in `#E24A4A`
+- [x] Dopo il delete, redirect alla schermata non autenticata senza messaggi
+- [x] Tutti i label seguono la lingua selezionata
+
+---
+
+## Stato implementazione
+
+**Completato** — commit su `ShoppingHub/project-spark`.
+
+| Componente | File |
+|---|---|
+| Settings page | `src/pages/SettingsPage.tsx` — 3 sezioni (Preferenze, Menu, Account) |
+| Menu config | `src/hooks/useMenuConfig.tsx` — load/save `menu_custom_items`, rilevamento gym, Supabase realtime listener |
+| Migrazioni DB | `20260307164834` (language) + `20260307165629` (menu_custom_items) |
+
+### Variazioni rispetto all'epic
+- Label toggle score: epic `"Mostra punteggio"` → codice `"Mostra punteggio traiettoria"` (più descrittivo)
+- Le voci fisse nella sezione Menu mostrano un'icona lucchetto + badge "fisso/fixed" (miglioramento UX)
+- Messaggio "Max 2 custom items active" mostrato quando il limite è raggiunto (miglioramento UX)
+- `useMenuConfig` include un Supabase realtime channel listener per auto-rimuovere "gym" se l'area viene eliminata
 
 ---
 
@@ -215,9 +233,9 @@ menu_custom_items  TEXT[]  DEFAULT '{}'  -- array di max 2 valori: 'finance', 'g
 
 ## Stories
 
-- `story-07-01` — Layout Settings con sezioni Preferenze, Menu, Account
-- `story-07-02` — Selettore lingua IT/EN con aggiornamento UI immediato
-- `story-07-03` — Logica toggle score e salvataggio su Supabase
-- `story-07-04` — Sezione Menu: voci fisse + max 2 slot custom configurabili
-- `story-07-05` — Sign out con redirect
-- `story-07-06` — Delete account con modale di conferma e cascade
+- `story-07-01` — Layout Settings con sezioni Preferenze, Menu, Account — **completata**
+- `story-07-02` — Selettore lingua IT/EN con aggiornamento UI immediato — **completata**
+- `story-07-03` — Logica toggle score e salvataggio su Supabase — **completata**
+- `story-07-04` — Sezione Menu: voci fisse + max 2 slot custom configurabili — **completata**
+- `story-07-05` — Sign out con redirect — **completata**
+- `story-07-06` — Delete account con modale di conferma e cascade — **completata**

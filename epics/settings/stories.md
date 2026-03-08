@@ -1,14 +1,14 @@
 # Stories — Epic 07 — Settings
 
-## Sequenza di implementazione
+## Sequenza di implementazione — ✅ tutte completate
 
 ```
-story-07-01 → Layout Settings: sezioni Preferenze, Menu, Account
-story-07-02 → Selettore lingua IT/EN con aggiornamento UI immediato
-story-07-03 → Toggle score: aggiornamento settings_score_visible su Supabase
-story-07-04 → Sezione Menu: voci fisse + max 2 slot custom configurabili
-story-07-05 → Sign out con redirect
-story-07-06 → Delete account con modale e cascade
+story-07-01 → Layout Settings: sezioni Preferenze, Menu, Account              ✅
+story-07-02 → Selettore lingua IT/EN con aggiornamento UI immediato           ✅
+story-07-03 → Toggle score: aggiornamento settings_score_visible su Supabase  ✅
+story-07-04 → Sezione Menu: voci fisse + max 2 slot custom configurabili      ✅
+story-07-05 → Sign out con redirect                                           ✅
+story-07-06 → Delete account con modale e cascade                             ✅
 ```
 
 > **Dipendenze:** Richiede Epic 00 (auth) completato. Epic 08 (i18n) per lingua. Epic 09 (Layout) per propagazione menu.

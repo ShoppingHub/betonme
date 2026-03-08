@@ -130,20 +130,37 @@ Il grafico mostra una linea piatta a zero — nessun messaggio di errore
 
 ## Acceptance Criteria
 
-- [ ] La Dashboard mostra un unico grafico aggregato (non le singole TrajectoryCard)
-- [ ] Il grafico aggregato usa la media dei `cumulative_score` di tutte le aree attive
-- [ ] Il MacroAreaSelector ha 5 opzioni: Tutto · Salute · Studio · Riduci · Finanze (IT) / All · Health · Study · Reduce · Finance (EN)
-- [ ] La selezione di una macro-area filtra il grafico per quel tipo di aree
-- [ ] `Tutto / All` è l'opzione di default
-- [ ] Il TimeRangeSelector aggiorna il grafico mantenendo la selezione macro-area
-- [ ] L'empty state mostra il copy nella lingua corrente (Epic 08)
-- [ ] Il loading state mostra skeleton animate-pulse
+- [x] La Dashboard mostra un unico grafico aggregato (non le singole TrajectoryCard)
+- [x] Il grafico aggregato usa la media dei `cumulative_score` di tutte le aree attive
+- [x] Il MacroAreaSelector ha 5 opzioni: Tutto · Salute · Studio · Riduci · Finanze (IT) / All · Health · Study · Reduce · Finance (EN)
+- [x] La selezione di una macro-area filtra il grafico per quel tipo di aree
+- [x] `Tutto / All` è l'opzione di default
+- [x] Il TimeRangeSelector aggiorna il grafico mantenendo la selezione macro-area
+- [x] L'empty state mostra il copy nella lingua corrente (Epic 08)
+- [x] Il loading state mostra skeleton animate-pulse
+
+---
+
+## Stato implementazione
+
+**Completato** — commit su `ShoppingHub/project-spark`.
+
+| Componente | File |
+|---|---|
+| Dashboard | `src/pages/Index.tsx` — grafico aggregato, MacroAreaSelector inline, slope + colore linea |
+| Empty state | `src/components/DashboardEmptyState.tsx` — icona Eye, CTA add area |
+| Time range | `src/components/TimeRangeSelector.tsx` — pill 30d/90d/365d con Framer Motion |
+
+### Variazioni rispetto all'epic
+- `MacroAreaSelector` implementato inline in `Index.tsx` (non come componente separato). Funzionalmente identico.
+- Quando una macro-area non ha dati, il codice mostra un messaggio testuale `"No data for this category yet"` invece di una linea piatta a zero. UX migliore.
+- `TrajectoryCard.tsx` e `TrajectoryCardSkeleton.tsx` rimangono nel codebase come **dead code** — non usati dalla Dashboard attuale. Candidati per cleanup.
 
 ---
 
 ## Note UI
 
-- Componenti: `<MacroAreaSelector>`, `<TimeRangeSelector>`
+- Componenti: `<MacroAreaSelector>` (inline in Index), `<TimeRangeSelector>`
 - Brand tokens: `brand-system/betonme_brand_system_lovable.md`
 - Anti-pattern da rispettare: sezione 10 del brand system
 
@@ -157,8 +174,8 @@ Il grafico mostra una linea piatta a zero — nessun messaggio di errore
 
 ## Stories
 
-- `story-02-01` — Layout Dashboard: header, grafico aggregato totale, TimeRangeSelector
-- `story-02-02` — MacroAreaSelector: selezione e filtro grafico per macro-area
-- `story-02-03` — Animazione Framer Motion sul TimeRangeSelector e transizione grafico
-- `story-02-04` — Empty state Dashboard
-- `story-02-05` — Loading skeleton state
+- `story-02-01` — Layout Dashboard: header, grafico aggregato totale, TimeRangeSelector — **completata**
+- `story-02-02` — MacroAreaSelector: selezione e filtro grafico per macro-area — **completata**
+- `story-02-03` — Animazione Framer Motion sul TimeRangeSelector e transizione grafico — **completata**
+- `story-02-04` — Empty state Dashboard — **completata**
+- `story-02-05` — Loading skeleton state — **completata**

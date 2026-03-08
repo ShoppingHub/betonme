@@ -1,11 +1,11 @@
 # Stories — Epic 09 — Layout Responsivo
 
-## Sequenza di implementazione
+## Sequenza di implementazione — ✅ tutte completate
 
 ```
-story-09-01 → Sidebar desktop (≥ 1024px) con logo e voci fisse
-story-09-02 → Adattamento responsivo: switch automatico mobile/desktop
-story-09-03 → Voci custom nella sidebar da configurazione Settings
+story-09-01 → Sidebar desktop (≥ 1024px) con logo e voci fisse               ✅
+story-09-02 → Adattamento responsivo: switch automatico mobile/desktop        ✅
+story-09-03 → Voci custom nella sidebar da configurazione Settings            ✅
 ```
 
 > **Dipendenze:** Richiede Epic 07 (Settings — sezione Menu) per le voci custom. La sidebar riflette la stessa configurazione del bottom nav.

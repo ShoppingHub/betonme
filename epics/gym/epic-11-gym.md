@@ -153,14 +153,31 @@ gym_exercises → id, session_id, name, sets, reps, weight_kg (nullable), notes 
 
 ## Acceptance Criteria
 
-- [ ] La sezione Gym Card appare solo per aree con nome `gym` o `palestra` (case insensitive) e tipo `health`
-- [ ] L'utente può aggiungere un esercizio con nome, serie, rip (peso opzionale)
-- [ ] L'esercizio appare nella lista della sessione di oggi dopo il salvataggio
-- [ ] L'aggiunta del primo esercizio completa automaticamente il check-in del giorno
-- [ ] Lo storico mostra le sessioni precedenti collassate con espansione al tap
-- [ ] Il bottom sheet ha i campi specificati e si chiude correttamente dopo il salvataggio
-- [ ] Il peso "0" non viene mostrato — viene mostrato solo se > 0
-- [ ] Le label seguono la lingua selezionata (Epic 08)
+- [x] La sezione Gym Card appare solo per aree con nome `gym` o `palestra` (case insensitive) e tipo `health`
+- [x] L'utente può aggiungere un esercizio con nome, serie, rip (peso opzionale)
+- [x] L'esercizio appare nella lista della sessione di oggi dopo il salvataggio
+- [x] L'aggiunta del primo esercizio completa automaticamente il check-in del giorno
+- [x] Lo storico mostra le sessioni precedenti collassate con espansione al tap
+- [x] Il bottom sheet ha i campi specificati e si chiude correttamente dopo il salvataggio
+- [x] Il peso "0" non viene mostrato — viene mostrato solo se > 0
+- [x] Le label seguono la lingua selezionata (Epic 08)
+
+---
+
+## Stato implementazione
+
+**Completato** — commit su `ShoppingHub/project-spark`.
+
+| Componente | File |
+|---|---|
+| Gym Card | `src/components/GymCard.tsx` — sessione oggi, storico, bottom sheet (Drawer) |
+| Rilevamento | `src/pages/AreaDetail.tsx` — `isGymArea = area.type === "health" && /^(gym|palestra)$/i.test(area.name)` |
+| Migrazione DB | `20260307171525` — tabelle `gym_sessions` + `gym_exercises` con RLS e cascade |
+
+### Variazioni rispetto all'epic
+- Label campo nome esercizio: epic `"Esercizio / Exercise"` → codice `"Nome / Name"` (campo funzionalmente identico)
+- Empty state: epic `"Nessun esercizio ancora. Inizia ad aggiungere."` → codice `"Nessun esercizio ancora"` (più sintetico)
+- Bottom sheet usa il componente shadcn `<Drawer>` (equivalente a bottom sheet)
 
 ---
 
@@ -174,7 +191,7 @@ gym_exercises → id, session_id, name, sets, reps, weight_kg (nullable), notes 
 
 ## Stories
 
-- `story-11-01` — Rilevamento automatico area Gym/Palestra e rendering sezione Gym Card
-- `story-11-02` — Aggiunta esercizio via bottom sheet e lista sessione di oggi
-- `story-11-03` — Modifica ed eliminazione esercizio
-- `story-11-04` — Storico sessioni collassabile
+- `story-11-01` — Rilevamento automatico area Gym/Palestra e rendering sezione Gym Card — **completata**
+- `story-11-02` — Aggiunta esercizio via bottom sheet e lista sessione di oggi — **completata**
+- `story-11-03` — Modifica ed eliminazione esercizio — **completata**
+- `story-11-04` — Storico sessioni collassabile — **completata**

@@ -1,11 +1,11 @@
 # Stories — Epic 08 — Lingua (IT / EN)
 
-## Sequenza di implementazione
+## Sequenza di implementazione — ✅ tutte completate
 
 ```
-story-08-01 → Selettore lingua in Settings + salvataggio su Supabase
-story-08-02 → Rilevamento lingua browser al primo accesso
-story-08-03 → Traduzione completa IT/EN di tutti i testi dell'app
+story-08-01 → Selettore lingua in Settings + salvataggio su Supabase          ✅
+story-08-02 → Rilevamento lingua browser al primo accesso                     ✅
+story-08-03 → Traduzione completa IT/EN di tutti i testi dell'app             ✅
 ```
 
 > **Dipendenze:** Richiede Epic 07 (Settings) per l'UI del selettore. Le traduzioni impattano tutti gli altri epic.

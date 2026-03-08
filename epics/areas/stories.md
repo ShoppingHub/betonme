@@ -1,11 +1,11 @@
 # Stories — Epic 10 — Areas (Sezione Aree)
 
-## Sequenza di implementazione
+## Sequenza di implementazione — ✅ tutte completate
 
 ```
-story-10-01 → Layout sezione Aree con 4 macro-categorie e liste area
-story-10-02 → CTA aggiungi per tipo + CTA globale header
-story-10-03 → Stati empty, loading e aree archiviate
+story-10-01 → Layout sezione Aree con 4 macro-categorie e liste area         ✅
+story-10-02 → CTA aggiungi per tipo + CTA globale header                     ✅
+story-10-03 → Stati empty, loading e aree archiviate                          ✅
 ```
 
 > **Dipendenze:** Richiede Epic 04 (Area Detail) e Epic 05 (Add/Edit Area) per la navigazione. Epic 08 (i18n) per i label.

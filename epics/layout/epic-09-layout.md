@@ -113,18 +113,35 @@ Se l'utente non ha configurato slot custom → il menu mostra solo le 3 voci fis
 
 ## Acceptance Criteria
 
-- [ ] Su viewport < 1024px compare esclusivamente il bottom nav in basso
-- [ ] Su viewport ≥ 1024px compare esclusivamente la sidebar laterale sinistra (240px)
-- [ ] La sidebar mostra le stesse voci del bottom nav (fisse + configurabili)
-- [ ] Settings è sempre l'ultima voce nella sidebar, separata da divider
-- [ ] Il contenuto principale su desktop ha `margin-left: 240px` e max-width 900px
-- [ ] La voce attiva è evidenziata con `#7DA3A0` su entrambi i layout
-- [ ] Il resize del viewport aggiorna il layout dinamicamente (no reload)
+- [x] Su viewport < 1024px compare esclusivamente il bottom nav in basso
+- [x] Su viewport ≥ 1024px compare esclusivamente la sidebar laterale sinistra (240px)
+- [x] La sidebar mostra le stesse voci del bottom nav (fisse + configurabili)
+- [x] Settings è sempre l'ultima voce nella sidebar, separata da divider
+- [x] Il contenuto principale su desktop ha `margin-left: 240px` e max-width 900px
+- [x] La voce attiva è evidenziata con `#7DA3A0` su entrambi i layout
+- [x] Il resize del viewport aggiorna il layout dinamicamente (no reload)
+
+---
+
+## Stato implementazione
+
+**Completato** — commit su `ShoppingHub/project-spark`.
+
+| Componente | File |
+|---|---|
+| Layout shell | `src/components/AppLayout.tsx` — switch `lg:hidden` / `hidden lg:flex` |
+| Bottom nav mobile | `src/components/BottomNav.tsx` — h-14, z-50, `lg:hidden` |
+| Sidebar desktop | `src/components/DesktopSidebar.tsx` — w-[240px], bg `#0F2F33`, `hidden lg:flex` |
+| Menu config | `src/hooks/useMenuConfig.tsx` — alimenta entrambi i layout |
+
+### Variazioni rispetto all'epic
+- Il bottom nav mobile mostra icone + label (non solo icone come specificato). Funzionalmente migliore per l'UX.
+- Desktop content: `ml-[240px]`, `max-w-[900px] mx-auto`, `p-8` — conforme.
 
 ---
 
 ## Stories
 
-- `story-09-01` — Sidebar desktop (≥ 1024px) con logo, voci fisse e settings in fondo
-- `story-09-02` — Adattamento responsivo: bottom nav su mobile, sidebar su desktop
-- `story-09-03` — Voci custom nella sidebar (slot 3 e 4 da configurazione Settings)
+- `story-09-01` — Sidebar desktop con logo, voci fisse e settings in fondo — **completata**
+- `story-09-02` — Adattamento responsivo: bottom nav su mobile, sidebar su desktop — **completata**
+- `story-09-03` — Voci custom nella sidebar da configurazione Settings — **completata**
