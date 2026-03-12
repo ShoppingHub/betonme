@@ -36,6 +36,9 @@ betonme/
 ├── CLAUDE.md                        ← questo file
 ├── prd.md                           ← mappa prodotto (snello, solo feature map)
 │
+├── architecture/
+│   └── navigation-v2.md             ← architettura navigazione v2 (4 tab fisse + 5° opzionale)
+│
 ├── brand-system/
 │   ├── CLAUDE.md                    ← regole d'uso del brand system
 │   ├── brand_system.md              ← fonte primaria design tokens e regole UI
@@ -50,7 +53,7 @@ betonme/
 │   │   ├── epic-01-onboarding.md
 │   │   └── stories.md
 │   ├── dashboard/
-│   │   ├── epic-02-dashboard.md
+│   │   ├── epic-02-dashboard.md     ← Home: hub giornaliero con lista attività di oggi
 │   │   └── stories.md
 │   ├── checkin/
 │   │   ├── epic-03-checkin.md
@@ -62,7 +65,7 @@ betonme/
 │   │   ├── epic-05-add-edit-area.md
 │   │   └── stories.md
 │   ├── finance/
-│   │   ├── epic-06-finance.md
+│   │   ├── epic-06-finance.md       ← Finance projection (5° tab opzionale)
 │   │   └── stories.md
 │   ├── settings/
 │   │   ├── epic-07-settings.md
@@ -71,13 +74,16 @@ betonme/
 │   │   ├── epic-08-i18n.md          ← lingua IT/EN
 │   │   └── stories.md
 │   ├── layout/
-│   │   ├── epic-09-layout.md        ← mobile bottom nav · desktop sidebar
+│   │   ├── epic-09-layout.md        ← 4 tab fisse + optional 5th tab
 │   │   └── stories.md
 │   ├── areas/
-│   │   ├── epic-10-areas.md         ← sezione aree con 4 macro-categorie
+│   │   ├── epic-10-areas.md         ← Attività: 4 macro-categorie (route /activities)
 │   │   └── stories.md
-│   └── gym/
-│       ├── epic-11-gym.md           ← gym card / scheda palestra
+│   ├── gym/
+│   │   ├── epic-11-gym.md           ← gym card / scheda palestra
+│   │   └── stories.md
+│   └── progress/
+│       ├── epic-12-progress.md      ← Progress: osservazione traiettoria globale
 │       └── stories.md
 │
 ├── lovable/
@@ -115,5 +121,6 @@ betonme/
 
 - PRD principale: `prd.md`
 - Brand system: `brand-system/brand_system.md`
+- Architettura navigazione: `architecture/navigation-v2.md`
 - Anti-pattern UI: sezione 10 del brand system — rispettarli sempre
 - Tono di voce: mai valutativo, mai motivazionale — solo osservativo

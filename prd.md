@@ -53,23 +53,24 @@ App
 │   ├── Step 1: Account (email/password + OAuth)
 │   ├── Step 2: Scegli le aree
 │   ├── Step 3: Imposta frequenza
-│   └── → Dashboard
+│   └── → Home
 │
 └── Main App (authenticated)
-    ├── [Tab 1] Dashboard (Home)           → epic-02-dashboard.md
-    ├── [Tab 2] Aree                       → epic-10-areas.md / epic-04-area-detail.md / epic-05-add-edit-area.md
-    ├── [Slot 3] Voce custom 1             → configurabile in Settings (epic-07-settings.md)
-    ├── [Slot 4] Voce custom 2             → configurabile in Settings (epic-07-settings.md)
-    └── [Ultima] Settings                 → epic-07-settings.md
+    ├── [Tab 1] Home (hub giornaliero)     → epic-02-dashboard.md
+    ├── [Tab 2] Attività                   → epic-10-areas.md / epic-04-area-detail.md / epic-05-add-edit-area.md
+    ├── [Tab 3] Progress                   → epic-12-progress.md
+    ├── [Tab 5°] Finance (opzionale)       → epic-06-finance.md · abilitabile da Impostazioni
+    └── [Ultima] Impostazioni              → epic-07-settings.md
 ```
 
 ### Navigazione adattiva
 - **Mobile (< 1024px):** Bottom nav fissa, 56px, background `#0F2F33` — solo icone
 - **Desktop (≥ 1024px):** Sidebar laterale sinistra, 240px — icone + label
-- Voci fisse: **Home · Aree · Impostazioni** (sempre presenti, non rimovibili)
-- Voci configurabili: max 2 slot aggiuntivi scelti dall'utente in Settings (es. Finanze, Palestra)
+- **4 tab fisse:** Home · Attività · Progress · Impostazioni — uguali per tutti, non configurabili
+- **5° tab opzionale:** Finance — attivabile da Impostazioni (toggle), non visibile di default
 - Icone Lucide outline 24px — active `#7DA3A0`, inactive `#B9C0C1`
 - Vedi `epic-09-layout.md` per il comportamento responsivo completo
+- Vedi `architecture/navigation-v2.md` per la razionale architetturale completa
 
 ---
 
@@ -78,16 +79,17 @@ App
 | # | Feature | Epic | Priorità |
 |---|---|---|---|
 | 01 | Onboarding (auth + setup aree) | `epic-01-onboarding.md` | P0 |
-| 02 | Dashboard — grafico totale aggregato + filtro macro-area | `epic-02-dashboard.md` | P0 |
+| 02 | Home — hub giornaliero con lista attività di oggi e check-in | `epic-02-dashboard.md` | P0 |
 | 03 | Check-in giornaliero | `epic-03-checkin.md` | P0 |
 | 04 | Area Detail — analisi traiettoria | `epic-04-area-detail.md` | P1 |
 | 05 | Add / Edit Area | `epic-05-add-edit-area.md` | P0 |
-| 06 | Finance Projection | `epic-06-finance.md` | P1 |
-| 07 | Settings (lingua, menu, account) | `epic-07-settings.md` | P1 |
+| 06 | Finance Projection (5° tab opzionale) | `epic-06-finance.md` | P2 |
+| 07 | Settings (lingua, score, notifiche, account) | `epic-07-settings.md` | P1 |
 | 08 | Lingua IT / EN | `epic-08-i18n.md` | P1 |
-| 09 | Layout responsivo (mobile bottom nav · desktop sidebar) | `epic-09-layout.md` | P1 |
-| 10 | Sezione Aree — 4 macro-categorie | `epic-10-areas.md` | P0 |
+| 09 | Layout responsivo — 4 tab fisse + optional 5th | `epic-09-layout.md` | P1 |
+| 10 | Attività — 4 macro-categorie + gestione aree | `epic-10-areas.md` | P0 |
 | 11 | Gym Card — scheda palestra | `epic-11-gym.md` | P2 |
+| 12 | Progress — osservazione traiettoria globale | `epic-12-progress.md` | P1 |
 
 ---
 
@@ -96,7 +98,7 @@ App
 RLS abilitato su tutte le tabelle.
 
 ```
-users        → id, settings_score_visible (default false), settings_notifications
+users        → id, settings_score_visible (default false), settings_notifications, extra_tab_enabled (default false)
 areas        → id, user_id, name, type, frequency_per_week, archived_at
 checkins     → id, area_id, user_id, date, completed — UNIQUE(area_id, date)
 score_daily  → id, area_id, date, daily_score, cumulative_score, consecutive_missed
@@ -119,9 +121,11 @@ cumulative_score = previous + daily_score
 
 Colonne aggiunte alla tabella `users`:
 ```
-language           TEXT    DEFAULT 'en'  CHECK (language IN ('it', 'en'))
-menu_custom_items  TEXT[]  DEFAULT '{}'  -- max 2 valori: 'finance', 'gym'
+language           TEXT     DEFAULT 'en'   CHECK (language IN ('it', 'en'))
+extra_tab_enabled  BOOLEAN  DEFAULT false  -- abilita il 5° tab Finance nella nav
 ```
+
+> `menu_custom_items` è deprecata. Sarà sostituita da `extra_tab_enabled` in migrazione.
 
 Nuove tabelle per Gym Card:
 ```

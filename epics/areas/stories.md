@@ -1,11 +1,12 @@
-# Stories — Epic 10 — Areas (Sezione Aree)
+# Stories — Epic 10 — Attività (Sezione Aree)
 
-## Sequenza di implementazione — ✅ tutte completate
+## Sequenza di implementazione
 
 ```
-story-10-01 → Layout sezione Aree con 4 macro-categorie e liste area         ✅
-story-10-02 → CTA aggiungi per tipo + CTA globale header                     ✅
-story-10-03 → Stati empty, loading e aree archiviate                          ✅
+story-10-01 → Layout sezione Aree con 4 macro-categorie e liste area         ✅ completata
+story-10-02 → CTA aggiungi per tipo + CTA globale header                     ✅ completata
+story-10-03 → Stati empty, loading e aree archiviate                          ✅ completata
+story-10-04 → Rename route /areas → /activities, label "Attività", back nav  ⏳ da fare
 ```
 
 > **Dipendenze:** Richiede Epic 04 (Area Detail) e Epic 05 (Add/Edit Area) per la navigazione. Epic 08 (i18n) per i label.
@@ -72,3 +73,27 @@ Continua Epic 10 di BetonMe. Gestisci gli stati speciali della sezione Aree.
 
 **Nome area lungo:**
 - Troncato con `text-ellipsis overflow-hidden` — nessun wrapping
+
+---
+
+## story-10-04 — Rename route e label
+
+Continua Epic 10 di BetonMe. Aggiorna la route e il label della sezione Aree per allinearlo all'architettura di navigazione v2.
+
+**Dipende da:** story-09-04 (refactor nav con `useNavConfig`)
+
+**Cosa cambia:**
+- Route `/areas` → `/activities`
+- Route `/areas/new` → `/activities/new`
+- Route `/areas/:id` → `/activities/:id`
+- Route `/areas/:id/edit` → `/activities/:id/edit`
+- File `src/pages/Areas.tsx` → rinomina in `src/pages/Activities.tsx`
+- Tab label IT: `"Aree"` → `"Attività"` / EN: `"Areas"` → `"Activities"`
+
+**Back navigation da Area Detail:**
+- Il back button in Area Detail deve tornare a `/activities` (non a `/` come ora)
+- Aggiorna l'header di Area Detail: `← Attività` / `← Activities`
+
+**Aggiorna tutti i redirect interni** da `/areas*` a `/activities*` (form, CTA, nav link).
+
+**Comportamento invariato:** tutto il resto (4 sezioni, card, CTA, filtri) rimane identico.
