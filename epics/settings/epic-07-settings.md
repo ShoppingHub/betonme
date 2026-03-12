@@ -20,7 +20,7 @@ I salvataggi sono silenziosi — nessun toast, nessun messaggio di conferma per 
 | Lingua / Language | Segmented control IT/EN | Rilevata da browser | Epic 08 |
 | Show trajectory score | Toggle | OFF | Mostra il punteggio numerico nell'Area Detail |
 | Notifications | Toggle | ON | Logica push rinviata al post-MVP |
-| Menu personalizzato | Selezione (max 2 voci) | Nessuna | Vedi sezione Menu |
+| Mostra tab Finance | Toggle | OFF | Abilita il 5° tab Finance nella nav — Epic 09 |
 | Account email | Testo (read-only) | — | Non modificabile |
 | Sign out | Bottone | — | |
 | Delete account | Bottone distruttivo | — | Richiede conferma |
@@ -35,16 +35,11 @@ I salvataggi sono silenziosi — nessun toast, nessun messaggio di conferma per 
 3. La preferenza `language` viene salvata su Supabase (silenzioso)
 4. Vedi Epic 08 per il comportamento completo
 
-### Configurazione Menu (voci personalizzabili)
-1. L'utente vede la sezione "Menu" con un elenco delle voci disponibili
-2. Le 3 voci fisse (Home · Aree · Impostazioni) sono indicate come non modificabili
-3. L'utente può attivare al massimo 2 slot aggiuntivi scegliendo tra le opzioni disponibili
-4. Le opzioni disponibili dipendono dalla configurazione dell'utente:
-   - `Finanze / Finance` — sempre disponibile
-   - `Palestra / Gym` — disponibile solo se l'utente ha almeno un'area di tipo `health` con nome `gym` o `palestra`
-5. L'attivazione/disattivazione di una voce aggiorna il menu di navigazione immediatamente
-6. Se l'utente ha 2 voci già attive e prova ad attivarne una terza → la terza rimane disabilitata (non selezionabile)
-7. Salvataggio silenzioso su Supabase (colonna `menu_custom_items` in tabella `users`)
+### Toggle "Mostra tab Finance"
+1. L'utente attiva il toggle "Mostra sezione Finanze / Show Finance tab"
+2. La preferenza `extra_tab_enabled` viene aggiornata su Supabase
+3. Salvataggio silenzioso — il 5° tab Finance appare immediatamente nella nav
+4. Disattivando il toggle, il tab Finance scompare dalla nav
 
 ### Toggle "Show trajectory score"
 1. L'utente attiva il toggle
@@ -84,13 +79,7 @@ I salvataggi sono silenziosi — nessun toast, nessun messaggio di conferma per 
 │  Lingua  [Italiano│English] │  ← Segmented control
 │  Punteggio traiettoria  [○] │  ← Toggle (default OFF)
 │  Notifiche              [●] │  ← Toggle (default ON)
-│                             │
-│  Menu                       │  ← Label sezione
-│  Home           (fisso) ──  │  ← Non modificabile
-│  Aree           (fisso) ──  │  ← Non modificabile
-│  Impostazioni   (fisso) ──  │  ← Non modificabile
-│  Finanze        [○]         │  ← Toggle slot custom (max 2 attivi)
-│  Palestra       [○]         │  ← Visibile solo se area Gym esiste
+│  Mostra sezione Finanze [○] │  ← Toggle 5° tab (default OFF)
 │                             │
 │  Account                    │  ← Label sezione
 │  user@email.com             │  ← Email read-only, text-[#B9C0C1]
@@ -144,11 +133,13 @@ Cancel:  "Cancel"              ← testo neutro, chiude il modale
 
 ## Database
 
-Aggiungere colonne alla tabella `users`:
+Colonne richieste nella tabella `users`:
 ```
-language           TEXT    DEFAULT 'en'  CHECK (language IN ('it', 'en'))
-menu_custom_items  TEXT[]  DEFAULT '{}'  -- array di max 2 valori: 'finance', 'gym'
+language           TEXT     DEFAULT 'en'   CHECK (language IN ('it', 'en'))
+extra_tab_enabled  BOOLEAN  DEFAULT false  -- abilita 5° tab Finance nella nav
 ```
+
+> `menu_custom_items` (TEXT[]) è deprecata — da rimuovere in migrazione (vedi Epic 09, story-09-04).
 
 ---
 
@@ -158,11 +149,8 @@ menu_custom_items  TEXT[]  DEFAULT '{}'  -- array di max 2 valori: 'finance', 'g
 - [x] Il cambio lingua aggiorna la UI immediatamente e salva `language` su Supabase
 - [x] Il toggle "Show trajectory score" aggiorna `settings_score_visible` su Supabase
 - [x] Il salvataggio dei toggle è silenzioso (nessun toast)
-- [x] La sezione Menu mostra le 3 voci fisse (non modificabili) e le voci custom disponibili
-- [x] Massimo 2 voci custom possono essere attivate simultaneamente
-- [x] La voce `Palestra / Gym` appare nella sezione Menu solo se esiste un'area health con nome gym/palestra
-- [x] L'attivazione/disattivazione di una voce custom aggiorna il menu di navigazione immediatamente
-- [x] `menu_custom_items` viene salvato su Supabase (silenzioso)
+- [ ] Il toggle "Mostra sezione Finanze / Show Finance tab" aggiorna `extra_tab_enabled` su Supabase
+- [ ] All'attivazione del toggle Finance, il tab appare nella nav immediatamente
 - [x] "Esci / Sign out" termina la sessione e redirige al login
 - [x] "Elimina account / Delete account" apre il modale con il copy esatto specificato
 - [x] "Delete permanently" elimina account e dati con cascade
@@ -199,12 +187,8 @@ menu_custom_items  TEXT[]  DEFAULT '{}'  -- array di max 2 valori: 'finance', 'g
 | Label lingua | `"Lingua"` | `"Language"` |
 | Label toggle score | `"Mostra punteggio"` | `"Show trajectory score"` |
 | Label toggle notifiche | `"Notifiche"` | `"Notifications"` |
-| Label sezione menu | `"Menu"` | `"Menu"` |
-| Label voce fissa Home | `"Home"` | `"Home"` |
-| Label voce fissa Aree | `"Aree"` | `"Areas"` |
-| Label voce fissa Settings | `"Impostazioni"` | `"Settings"` |
-| Label voce custom Finance | `"Finanze"` | `"Finance"` |
-| Label voce custom Gym | `"Palestra"` | `"Gym"` |
+| Label toggle Finance tab | `"Mostra sezione Finanze"` | `"Show Finance tab"` |
+| Sub toggle Finance tab | `"Aggiunge un accesso rapido alla proiezione finanziaria."` | `"Adds quick access to the finance projection."` |
 | Label sezione account | `"Account"` | `"Account"` |
 | Bottone sign out | `"Esci"` | `"Sign out"` |
 | Bottone delete | `"Elimina account"` | `"Delete account"` |
@@ -226,16 +210,16 @@ menu_custom_items  TEXT[]  DEFAULT '{}'  -- array di max 2 valori: 'finance', 'g
 ## Dipendenze
 
 - Epic 08 (i18n) — per la logica lingua e i label IT/EN
-- Epic 09 (Layout) — il menu configurato qui alimenta la navigazione desktop e mobile
-- Epic 11 (Gym) — la voce `Palestra / Gym` nel menu è condizionale all'esistenza dell'area
+- Epic 09 (Layout) — il toggle `extra_tab_enabled` qui attiva il 5° tab nella nav
 
 ---
 
 ## Stories
 
-- `story-07-01` — Layout Settings con sezioni Preferenze, Menu, Account — **completata**
+- `story-07-01` — Layout Settings con sezioni Preferenze e Account — **completata** *(da aggiornare: rimuovere sezione Menu)*
 - `story-07-02` — Selettore lingua IT/EN con aggiornamento UI immediato — **completata**
 - `story-07-03` — Logica toggle score e salvataggio su Supabase — **completata**
-- `story-07-04` — Sezione Menu: voci fisse + max 2 slot custom configurabili — **completata**
+- `story-07-04` — Sezione Menu custom — **deprecata** *(rimossa con refactor nav)*
 - `story-07-05` — Sign out con redirect — **completata**
 - `story-07-06` — Delete account con modale di conferma e cascade — **completata**
+- `story-07-07` — Toggle "Mostra sezione Finanze" con aggiornamento nav immediato — **da fare**

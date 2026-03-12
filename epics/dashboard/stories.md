@@ -1,99 +1,106 @@
-# Stories — Epic 02 — Dashboard
+# Stories — Epic 02 — Home (Hub Giornaliero)
 
-## Sequenza di implementazione — ✅ tutte completate
+## Sequenza di implementazione
 
 ```
-story-02-01 → Layout Dashboard: header + grafico aggregato totale             ✅
-story-02-02 → MacroAreaSelector: filtro per macro-area                        ✅
-story-02-03 → TimeRangeSelector con animazione Framer Motion                  ✅
-story-02-04 → Empty state                                                     ✅
-story-02-05 → Loading skeleton                                                ✅
+story-02-01 → Layout Home: header data + lista aree di oggi con CheckInButton   ⏳ da fare
+story-02-02 → Stato check-in: caricamento e aggiornamento per ciascuna area     ⏳ da fare
+story-02-03 → Indicatore gym day nella Home                                     ⏳ da fare
+story-02-04 → Empty state Home (nessuna area → CTA Attività)                    ⏳ da fare
 ```
 
-> **Dipendenze:** Richiede Epic 00 (auth) e Epic 01 (onboarding) completati. I dati arrivano dalla tabella `areas` e `score_daily` di Supabase.
+> **Prerequisiti:** Richiede story-09-04 (refactor nav, route `/activities`) e Epic 03 (CheckInButton). La Home non richiede Epic 12 come prerequisito.
+
+> **Story precedenti 02-01..02-05 (grafico aggregato) sono deprecate.** Il comportamento è stato spostato in Epic 12 (Progress). L'attuale `src/pages/Index.tsx` va riscritto.
 
 ---
 
-## story-02-01 — Layout Dashboard con grafico aggregato
+## story-02-01 — Layout Home con lista attività di oggi
 
-BetonMe è un'app mobile-first di osservazione del benessere personale. Aggiorna la Dashboard (route `/`) per mostrare un unico grafico aggregato invece delle singole TrajectoryCard.
+BetonMe è un'app mobile-first di osservazione del benessere. Riscrivi la Home (route `/`) come hub giornaliero: una lista semplice delle aree attive dell'utente con il bottone check-in per ciascuna.
 
-**Cosa mostra:**
-- Header fisso (56px): wordmark `"BetonMe"` a sinistra, icona Settings a destra → naviga a `/settings`
-- Selettore time range sticky sotto l'header: pill `"30d"` · `"90d"` · `"365d"` — default `"30d"`
-- Grafico unico Recharts `<LineChart>` di altezza 60vh che rappresenta l'andamento totale dell'utente: media mobile dei `cumulative_score` di tutte le aree attive
-- Sotto il grafico: `<MacroAreaSelector>` (implementato in story-02-02)
+**Rimuovi** il grafico aggregato attuale (`src/pages/Index.tsx`) e i componenti `TrajectoryCard.tsx` e `TrajectoryCardSkeleton.tsx` che sono dead code.
 
-**Logica dati grafico:**
-- Raggruppa i `score_daily.cumulative_score` per data
-- Per ogni data, calcola la media dei punteggi di tutte le aree attive dell'utente
-- La linea rappresenta questa media nel tempo
+**Cosa mostra la nuova Home:**
 
-**Colore linea (slope ultimi 7 giorni):**
-- Slope > 0.1 → `#7DA3A0`
-- Slope < -0.1 → `#BFA37A`
-- Neutro → `#8C9496`
+**Header:**
+- Wordmark `"BetonMe"` a sinistra
+- Data di oggi a destra: formato localizzato — IT: `"12 marzo"` / EN: `"March 12"`
 
-**Stile grafico:**
-- Griglia solo orizzontale, `opacity-10`
-- Asse Y nascosto
-- Asse X: tick date formato breve, 12px, `#B9C0C1`
+**Lista aree:**
+- Una card per ciascuna area attiva dell'utente (non archiviate)
+- Ogni card contiene:
+  - Nome area (testo principale)
+  - CheckInButton (vedi Epic 03 per gli stati: idle / loading / completed)
 - Background card: `bg-[#1F4A50] rounded-xl p-4`
+- Ordine: ordine di creazione area
+
+**Ordine check-in:**
+- Al caricamento, query `checkins` per `user_id` e `date = oggi`
+- Se esiste un checkin `completed = true` per un'area → bottone in stato "Observed"
+- Se non esiste → bottone in stato "Log today"
+
+**Navigazione:**
+- Tap sull'area card (fuori dal bottone) → naviga ad `/activities/:id` (Area Detail)
 
 ---
 
-## story-02-02 — MacroAreaSelector
+## story-02-02 — Stato check-in per ciascuna area
 
-Continua la Dashboard di BetonMe. Aggiungi il selettore di macro-area sotto il grafico.
+Continua la Home di BetonMe. Implementa il caricamento e l'aggiornamento dello stato check-in per ogni area nella lista.
 
-**Componente `<MacroAreaSelector>`:**
-- Row di pill scorrevole orizzontalmente sotto il grafico
-- 5 opzioni: `Tutto` · `Salute` · `Studio` · `Riduci` · `Finanze` (IT) / `All` · `Health` · `Study` · `Reduce` · `Finance` (EN)
-- Label rispetta la lingua dell'utente (preferenza `language` da tabella `users`)
-- Default: `Tutto / All` attivo
-- Pill attiva: background `#7DA3A0`, testo scuro
-- Pill inattiva: background trasparente, bordo sottile, testo `#B9C0C1`
+**Al caricamento:**
+- Query a Supabase: `checkins` dove `user_id = currentUser` AND `date = today`
+- Per ogni area, determina se il check-in di oggi è completato
+- Il bottone mostra lo stato corretto senza attendere l'interazione utente
 
-**Behavior filtro:**
-- Tap su una macro-area → il grafico si aggiorna mostrando la media dei `cumulative_score` delle sole aree di quel tipo (`health` / `study` / `reduce` / `finance`)
-- Tap su `Tutto / All` → torna alla media di tutte le aree
-- Se l'utente non ha aree per una macro-categoria → il grafico mostra una linea piatta a zero, nessun errore
-- La selezione macro-area rimane quando l'utente cambia il time range
+**Loading state:**
+- Durante la query iniziale: skeleton `animate-pulse` per ogni card (`bg-[#1F4A50] rounded-xl h-20`)
 
----
+**Dopo tap su "Log today":**
+- Segui la logica di Epic 03 per la transizione idle → loading → completed
+- L'aggiornamento è ottimistico: il bottone passa a "Observed" immediatamente, la scrittura avviene in background
 
-## story-02-03 — TimeRangeSelector animato
-
-Continua la Dashboard di BetonMe. Implementa l'animazione del `<TimeRangeSelector>`.
-
-**Behavior:**
-- Tap su una pill (30d / 90d / 365d) → la pill attiva si sposta con animazione Framer Motion `layoutId`
-- Il grafico si aggiorna con i dati del range selezionato (300ms ease-in-out)
-- La selezione macro-area rimane attiva
+**Tutto loggato oggi:**
+- Se tutte le aree sono in stato "Observed":
+  - IT: `"Tutto registrato per oggi."` — testo piccolo centrato sotto la lista, `text-[#B9C0C1]`
+  - EN: `"All logged for today."`
 
 ---
 
-## story-02-04 — Empty state
+## story-02-03 — Indicatore gym day nella Home
 
-Continua la Dashboard di BetonMe. Aggiungi l'empty state per utenti senza aree attive.
+Continua la Home di BetonMe. Aggiungi l'indicatore del giorno scheda palestra nella card dell'area gym, quando applicabile.
+
+**Condizione di visibilità:**
+- L'utente ha un'area `type = health` con nome `gym` o `palestra` (case insensitive)
+- L'area ha una scheda configurata (`gym_programs` esiste per quest'area)
+- La sessione di oggi non è ancora stata completata (`gym_sessions` non esiste per `area_id + date = oggi`)
+
+**Quando visibile — dentro la card dell'area Gym:**
+- Sotto il nome area, riga aggiuntiva: `"Giorno 2 — Gambe →"` (IT) / `"Day 2 — Legs →"` (EN)
+- Stile: `text-sm text-[#B9C0C1]`
+- Tap sulla riga → naviga a `/activities/:gymAreaId` (Area Detail gym)
+
+**Logica "giorno successivo":**
+- Stesso algoritmo dell'Epic 11: giorno successivo all'ultima sessione, rotazione ciclica
+- Se nessuna sessione precedente → Giorno 1
+
+**Quando non visibile:**
+- Area gym non esiste
+- Scheda non ancora configurata
+- Sessione di oggi già completata
+
+---
+
+## story-02-04 — Empty state Home
+
+Continua la Home di BetonMe. Implementa l'empty state per utenti senza aree attive.
 
 **Quando appare:** nessuna area nella tabella `areas` per l'utente (o tutte archiviate).
 
 **Cosa mostra (segue la lingua utente):**
 - Icona `Eye` (Lucide), 48px, `#7DA3A0`
 - IT: `"Cosa vuoi osservare?"` / EN: `"What do you want to observe?"`
-- IT: `"Aggiungi un'area di vita per iniziare."` / EN: `"Add a life area to start seeing your trajectory."`
-- CTA IT: `"Aggiungi la tua prima area"` / EN: `"Add your first area"` → naviga a `/areas/new`
-
----
-
-## story-02-05 — Loading skeleton
-
-Continua la Dashboard di BetonMe. Aggiungi lo stato di loading.
-
-**Quando appare:** durante il caricamento iniziale da Supabase.
-
-**Cosa mostra:**
-- Skeleton `animate-pulse` `bg-[#1F4A50] rounded-xl h-[60vh]` al posto del grafico
-- Skeleton row di 5 pill muted al posto del MacroAreaSelector
-- Il TimeRangeSelector rimane visibile ma non interattivo
+- IT: `"Aggiungi un'area in Attività per iniziare."` / EN: `"Add an area in Activities to start observing."`
+- CTA IT: `"Vai ad Attività"` / EN: `"Go to Activities"` → naviga a `/activities`

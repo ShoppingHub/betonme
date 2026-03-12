@@ -1,38 +1,44 @@
-# Epic 02 — Dashboard (Home)
+# Epic 02 — Home (Hub Giornaliero)
 
 ## Obiettivo
-Offrire all'utente una visione immediata dell'andamento complessivo del proprio benessere, con la possibilità di approfondire la traiettoria per singola macro-area tramite un selettore.
+Offrire all'utente un accesso immediato alle attività da registrare oggi, con check-in diretto per ciascuna area — in meno di 3 secondi dall'apertura dell'app.
+
+> **Nota architetturale:** Questa è la Home tab (Tab 1). La visualizzazione dei trend storici è stata spostata nella sezione Progress (Epic 12). Home è interazione, Progress è osservazione.
 
 ---
 
 ## Behavior
 
-La Dashboard mostra **un unico grafico aggregato** che rappresenta l'andamento totale dell'utente — media ponderata dei `cumulative_score` di tutte le aree attive. È il "termometro" globale del benessere.
+All'apertura dell'app l'utente vede la lista delle proprie aree attive con lo stato del check-in di oggi. Ogni area mostra un bottone check-in che cambia stato quando il log viene registrato.
 
-Sotto il grafico totale, un selettore di macro-area permette di filtrare il grafico per visualizzare la traiettoria di una sola macro-categoria (Salute / Studio / Riduci / Finanze). Quando una macro-area è selezionata, il grafico mostra la media dei punteggi delle aree di quel tipo.
+Se l'utente ha un'area Gym con scheda configurata, la Home mostra anche un indicatore del giorno scheda previsto per oggi.
 
-Il check-in del giorno per le singole aree rimane accessibile dalla schermata Areas (Epic 10) e dall'Area Detail (Epic 04).
+La Home non mostra grafici. I grafici vivono in Progress.
 
 ---
 
 ## Flussi
 
-### Visualizzazione Dashboard — Vista Totale
-1. L'utente apre l'app
-2. Vede il grafico totale aggregato (default: 30d)
-3. Sotto il grafico: selettore macro-area con 5 opzioni — `Tutto · Salute · Studio · Riduci · Finanze` (IT) / `All · Health · Study · Reduce · Finance` (EN)
-4. Il selettore è in stato `Tutto / All` di default
+### Flusso principale — Log di oggi
+1. L'utente apre l'app → Home
+2. Vede la lista delle aree di oggi con bottone "Log today" / "Registra" per ciascuna
+3. Tappa "Log today" sull'area desiderata
+4. Il check-in viene registrato (Epic 03)
+5. Il bottone transiziona a "Observed" (300ms)
+6. Done — nessun altro feedback
 
-### Filtro per Macro-area
-1. L'utente tappa una macro-area nel selettore
-2. Il grafico si aggiorna mostrando solo i dati di quella macro-area
-3. L'opzione selezionata è evidenziata
-4. Tap su `Tutto / All` riporta alla vista aggregata
+### Check-in già effettuato
+- Al caricamento, le aree già loggate oggi mostrano già lo stato "Observed"
+- Il bottone "Observed" non è tappabile
 
-### Cambio Time Range
-1. L'utente tappa uno dei tre pill (30d, 90d, 365d)
-2. Il grafico si aggiorna con il range selezionato
-3. La selezione di macro-area rimane attiva
+### Indicatore Gym Day
+- Se esiste un'area Gym con scheda e la sessione di oggi non è ancora stata completata:
+  - Una riga nell'area card mostra il nome del giorno scheda (es. "Giorno 2 — Gambe")
+  - Tap sull'indicatore → naviga ad Area Detail (Attività > Area Gym)
+
+### Empty state (nessuna area)
+- L'utente non ha ancora nessuna area
+- Messaggio neutro con CTA per andare ad Attività e creare la prima area
 
 ---
 
@@ -40,55 +46,43 @@ Il check-in del giorno per le singole aree rimane accessibile dalla schermata Ar
 
 ```
 ┌─────────────────────────────┐
-│ BetonMe          [settings] │  ← Header 56px
+│ BetonMe                     │  ← Header
 ├─────────────────────────────┤
-│  30d  │  90d  │  365d       │  ← TimeRangeSelector
+│  Oggi, 12 Marzo             │  ← Data corrente
 ├─────────────────────────────┤
 │                             │
-│   [Grafico totale — 60vh]   │  ← Aggregato o filtrato per macro-area
+│  ┌─────────────────────┐    │
+│  │ Palestra            │    │  ← Area card
+│  │ Giorno 2 — Gambe →  │    │  ← Indicatore gym day (se presente)
+│  │ [Log today]         │    │  ← CheckInButton
+│  └─────────────────────┘    │
 │                             │
-├─────────────────────────────┤
-│ Tutto│Salute│Studio│Riduci│€ │  ← MacroAreaSelector (pill row scrollabile)
+│  ┌─────────────────────┐    │
+│  │ Studio              │    │
+│  │ [Observed ✓]        │    │  ← Già loggato oggi
+│  └─────────────────────┘    │
+│                             │
+│  ┌─────────────────────┐    │
+│  │ Social media        │    │
+│  │ [Log today]         │    │
+│  └─────────────────────┘    │
+│                             │
 ├─────────────────────────────┤
 │  [Nav]                      │
 └─────────────────────────────┘
 ```
 
-### MacroAreaSelector
-
-| Proprietà | Valore |
-|---|---|
-| Tipo | Pill row scorrevole orizzontalmente |
-| Opzioni | Tutto · Salute · Studio · Riduci · Finanze (IT) / All · Health · Study · Reduce · Finance (EN) |
-| Default | `Tutto / All` attivo |
-| Icone | Lucide outline mini accanto al label (opzionale) |
-| Pill attiva | Background `#7DA3A0`, testo dark |
-| Pill inattiva | Background trasparente, bordo sottile, testo `#B9C0C1` |
-
 ---
 
-## Specifiche Grafico Totale
+## Area Card nella Home
 
 | Proprietà | Valore |
 |---|---|
-| Componente | Recharts `<LineChart>` |
-| Tipo linea | `type="monotone"` |
-| Dati | Media mobile dei `cumulative_score` di tutte le aree attive (o filtrate per macro-area) |
-| Colore linea | Calcolato da slope 7 giorni → `#7DA3A0` / `#8C9496` / `#BFA37A` |
-| Griglia | Solo orizzontale, `opacity-10` |
-| Asse Y | Nascosto |
-| Asse X | Tick date, 12px, `#B9C0C1` |
-| Altezza | 60vh |
 | Background | `bg-[#1F4A50] rounded-xl p-4` |
-
-### Logica colore linea (slope 7 giorni)
-```typescript
-function getLineColor(slope: number): string {
-  if (slope > 0.1)  return '#7DA3A0'; // positivo
-  if (slope < -0.1) return '#BFA37A'; // declino — mai rosso
-  return '#8C9496';                   // neutro
-}
-```
+| Nome area | Testo principale, `text-[#EAEAEA]` |
+| Indicatore gym day | Testo piccolo `text-[#B9C0C1]`, tap → Area Detail gym |
+| CheckInButton | Vedi Epic 03 per gli stati |
+| Ordine aree | Ordine di creazione dell'utente |
 
 ---
 
@@ -99,83 +93,92 @@ function getLineColor(slope: number): string {
 Icona:    Eye (Lucide), 48px, #7DA3A0
 Testo IT: "Cosa vuoi osservare?"
 Testo EN: "What do you want to observe?"
-Sub IT:   "Aggiungi un'area di vita per iniziare."
-Sub EN:   "Add a life area to start seeing your trajectory."
-CTA IT:   "Aggiungi la tua prima area"
-CTA EN:   "Add your first area"
-→ naviga ad Add Area
+Sub IT:   "Aggiungi un'area in Attività per iniziare."
+Sub EN:   "Add an area in Activities to start observing."
+CTA IT:   "Vai ad Attività"
+CTA EN:   "Go to Activities"
+→ naviga a /activities
 ```
 
-### Loading State (caricamento iniziale)
+### Loading State
 ```
-Skeleton: bg-[#1F4A50] animate-pulse rounded-xl h-[60vh]
-Skeleton MacroAreaSelector: 5 pill muted
+Skeleton: 2-3 card bg-[#1F4A50] animate-pulse rounded-xl h-24
 ```
 
-### Macro-area senza dati
+### Nessuna attività pianificata per oggi
+Se tutte le aree risultano già loggiate oggi:
 ```
-Il grafico mostra una linea piatta a zero — nessun messaggio di errore
+Messaggio IT: "Tutto registrato per oggi."
+Messaggio EN: "All logged for today."
+Stile: testo piccolo centrato, text-[#B9C0C1]
 ```
 
 ---
 
 ## Edge Case
 
-- Utente con 1 sola area → il grafico totale e quello filtrato coincidono
-- Utente con aree solo in 2 macro-categorie → le altre 2 pill del selettore mostrano una linea piatta
-- Time range 365d senza dati sufficienti → grafico con i dati disponibili, senza errori
-- Nessuna connessione → dati cached mostrati, errore non bloccante
+- Area archiviata → non compare nella lista
+- Più di 5 aree → scroll verticale naturale
+- Utente ha solo aree di tipo Finance → compaiono normalmente (Finance non è speciale in Home)
+- Area Gym senza scheda configurata → nessun indicatore gym day, solo CheckInButton
+- Sessione gym già completata oggi → nessun indicatore gym day
 
 ---
 
 ## Acceptance Criteria
 
-- [x] La Dashboard mostra un unico grafico aggregato (non le singole TrajectoryCard)
-- [x] Il grafico aggregato usa la media dei `cumulative_score` di tutte le aree attive
-- [x] Il MacroAreaSelector ha 5 opzioni: Tutto · Salute · Studio · Riduci · Finanze (IT) / All · Health · Study · Reduce · Finance (EN)
-- [x] La selezione di una macro-area filtra il grafico per quel tipo di aree
-- [x] `Tutto / All` è l'opzione di default
-- [x] Il TimeRangeSelector aggiorna il grafico mantenendo la selezione macro-area
-- [x] L'empty state mostra il copy nella lingua corrente (Epic 08)
-- [x] Il loading state mostra skeleton animate-pulse
-
----
-
-## Stato implementazione
-
-**Completato** — commit su `ShoppingHub/project-spark`.
-
-| Componente | File |
-|---|---|
-| Dashboard | `src/pages/Index.tsx` — grafico aggregato, MacroAreaSelector inline, slope + colore linea |
-| Empty state | `src/components/DashboardEmptyState.tsx` — icona Eye, CTA add area |
-| Time range | `src/components/TimeRangeSelector.tsx` — pill 30d/90d/365d con Framer Motion |
-
-### Variazioni rispetto all'epic
-- `MacroAreaSelector` implementato inline in `Index.tsx` (non come componente separato). Funzionalmente identico.
-- Quando una macro-area non ha dati, il codice mostra un messaggio testuale `"No data for this category yet"` invece di una linea piatta a zero. UX migliore.
-- `TrajectoryCard.tsx` e `TrajectoryCardSkeleton.tsx` rimangono nel codebase come **dead code** — non usati dalla Dashboard attuale. Candidati per cleanup.
+- [ ] La Home mostra la lista di tutte le aree attive con CheckInButton
+- [ ] Il CheckInButton segue gli stati definiti in Epic 03 (idle / loading / completed)
+- [ ] Al caricamento, le aree già loggate oggi mostrano già lo stato "Observed"
+- [ ] L'indicatore gym day appare solo se esiste area gym con scheda e sessione non completata oggi
+- [ ] Tap sull'indicatore gym day naviga all'Area Detail dell'area gym
+- [ ] L'empty state mostra il copy corretto nella lingua corrente con CTA verso Attività
+- [ ] Le aree archiviate non compaiono
+- [ ] La Home non contiene grafici (i grafici sono in Progress — Epic 12)
 
 ---
 
 ## Note UI
 
-- Componenti: `<MacroAreaSelector>` (inline in Index), `<TimeRangeSelector>`
-- Brand tokens: `brand-system/betonme_brand_system_lovable.md`
-- Anti-pattern da rispettare: sezione 10 del brand system
+- Nessun grafico in Home — la Home è azione, non osservazione
+- Nessun feedback celebrativo al check-in — coerente con tono osservativo del prodotto
+- Data mostrata nell'header: formato localizzato (IT: "12 Marzo 2026" / EN: "March 12, 2026")
+- Brand tokens: `brand-system/brand_system.md`
 
 ---
 
 ## Dipendenze
 
-- Epic 08 (i18n) — per le label IT/EN del MacroAreaSelector e dell'empty state
+- Epic 03 (Check-in) — CheckInButton e logica score
+- Epic 08 (i18n) — label IT/EN
+- Epic 11 (Gym) — indicatore gym day condizionale
+- Epic 12 (Progress) — la visualizzazione dei trend è stata spostata lì
+
+---
+
+## Stato implementazione
+
+**Da refactorare** — l'attuale `src/pages/Index.tsx` contiene il grafico aggregato (comportamento del vecchio spec). Va completamente riscritto come hub giornaliero con lista attività.
+
+| Componente da creare | Descrizione |
+|---|---|
+| `src/components/TodayActivityList.tsx` | Lista aree con CheckInButton per ciascuna |
+| `src/components/GymDayIndicator.tsx` | Indicatore giorno scheda palestra |
+
+| Dead code da rimuovere | Motivo |
+|---|---|
+| `src/components/TrajectoryCard.tsx` | Non più usato |
+| `src/components/TrajectoryCardSkeleton.tsx` | Non più usato |
+
+Il grafico aggregato e il MacroAreaSelector migrano in `src/pages/Progress.tsx` (Epic 12).
 
 ---
 
 ## Stories
 
-- `story-02-01` — Layout Dashboard: header, grafico aggregato totale, TimeRangeSelector — **completata**
-- `story-02-02` — MacroAreaSelector: selezione e filtro grafico per macro-area — **completata**
-- `story-02-03` — Animazione Framer Motion sul TimeRangeSelector e transizione grafico — **completata**
-- `story-02-04` — Empty state Dashboard — **completata**
-- `story-02-05` — Loading skeleton state — **completata**
+- `story-02-01` — Layout Home: header data, lista aree di oggi con CheckInButton — **da fare**
+- `story-02-02` — Stato check-in per ciascuna area: caricamento e aggiornamento ottimistico — **da fare**
+- `story-02-03` — Indicatore gym day nella Home — **da fare**
+- `story-02-04` — Empty state Home (nessuna area → CTA Attività) — **da fare**
+
+> Le story 02-01..02-05 precedenti (grafico aggregato) sono **deprecate**. Il comportamento è stato spostato in Epic 12 (Progress).
