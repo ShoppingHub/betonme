@@ -1,17 +1,18 @@
 # Stories — Epic 07 — Settings
 
-## Sequenza di implementazione — ✅ tutte completate
+## Sequenza di implementazione
 
 ```
-story-07-01 → Layout Settings: sezioni Preferenze, Menu, Account              ✅
-story-07-02 → Selettore lingua IT/EN con aggiornamento UI immediato           ✅
-story-07-03 → Toggle score: aggiornamento settings_score_visible su Supabase  ✅
-story-07-04 → Sezione Menu: voci fisse + max 2 slot custom configurabili      ✅
-story-07-05 → Sign out con redirect                                           ✅
-story-07-06 → Delete account con modale e cascade                             ✅
+story-07-01 → Layout Settings: sezioni Preferenze, Menu, Account              ✅ completata
+story-07-02 → Selettore lingua IT/EN con aggiornamento UI immediato           ✅ completata
+story-07-03 → Toggle score: aggiornamento settings_score_visible su Supabase  ✅ completata
+story-07-04 → Sezione Menu: voci fisse + max 2 slot custom configurabili      ✅ completata (deprecata)
+story-07-05 → Sign out con redirect                                           ✅ completata
+story-07-06 → Delete account con modale e cascade                             ✅ completata
+story-07-07 → Toggle "Mostra sezione Finanze" + extra_tab_enabled su Supabase ⏳ da fare
 ```
 
-> **Dipendenze:** Richiede Epic 00 (auth) completato. Epic 08 (i18n) per lingua. Epic 09 (Layout) per propagazione menu.
+> **Dipendenze:** story-07-07 richiede story-09-04 (hook `useNavConfig`) già implementata.
 
 ---
 
@@ -28,7 +29,6 @@ BetonMe è un'app di osservazione del benessere. Aggiorna la schermata Settings 
 
 **Sezione "Menu":**
 - 3 righe fisse non modificabili con etichetta `(fisso)`: Home · Aree/Areas · Impostazioni/Settings
-- Voci custom configurabili (implementate in story-07-04)
 
 **Sezione "Account":**
 - Email dell'utente (read-only, colore secondario, troncata con ellipsis)
@@ -69,32 +69,9 @@ Continua Epic 07 di BetonMe. Implementa la logica del toggle "Mostra punteggio /
 
 ---
 
-## story-07-04 — Sezione Menu configurabile
+## story-07-04 — Sezione Menu configurabile *(deprecata)*
 
-Continua Epic 07 di BetonMe. Implementa la sezione "Menu" in Settings.
-
-**Cosa mostra:**
-
-Voci fisse (non modificabili, etichettate come fisse):
-- Home
-- Aree / Areas
-- Impostazioni / Settings
-
-Voci custom disponibili (ciascuna con toggle on/off):
-- `Finanze / Finance` — sempre visibile nella lista
-- `Palestra / Gym` — visibile solo se l'utente ha almeno un'area con `type = "health"` e `name` = `"gym"` o `"palestra"` (case insensitive)
-
-**Regola massimo 2 slot:**
-- Se 2 voci custom sono già attive → i toggle delle voci non attive sono disabilitati (grayed out, non tappabili)
-- Disattivare una voce libera lo slot e riabilita gli altri toggle
-
-**Behavior al cambio toggle:**
-- Il menu di navigazione (bottom nav su mobile, sidebar su desktop) si aggiorna immediatamente
-- Salvataggio ottimistico di `menu_custom_items` (array) nella tabella `users`
-- Nessun toast
-
-**Edge case:**
-- L'utente elimina l'area Gym → la voce `Palestra / Gym` scompare dalla sezione Menu; se era attiva viene rimossa automaticamente da `menu_custom_items`
+Story completata nell'implementazione precedente. Sostituita dalla story-07-07 con la nuova architettura nav.
 
 ---
 
@@ -139,3 +116,29 @@ EN:
 
 **Edge case:**
 - Errore di rete → messaggio inline sotto la CTA, nessuna azione eseguita, modale rimane aperto
+
+---
+
+## story-07-07 — Toggle "Mostra sezione Finanze"
+
+Continua Epic 07 di BetonMe. Aggiungi il toggle per abilitare il 5° tab Finance nella navigazione.
+
+**Dipende da:** story-09-04 (hook `useNavConfig` con `extra_tab_enabled` già gestito)
+
+**Cosa aggiungere in Settings — sezione Preferenze**, dopo i toggle esistenti:
+
+- Toggle: `"Mostra sezione Finanze"` (IT) / `"Show Finance tab"` (EN) — default OFF
+- Sottotitolo IT: `"Aggiunge un accesso rapido alla proiezione finanziaria."`
+- Sottotitolo EN: `"Adds quick access to the finance projection."`
+
+**Behavior:**
+- Al cambio del toggle → aggiornamento ottimistico di `extra_tab_enabled` (BOOLEAN) nella tabella `users`
+- Se `true` → il tab "Finanze / Finance" appare immediatamente nella nav (bottom nav su mobile, sidebar su desktop), come 4a voce prima di Impostazioni
+- Se `false` → il tab scompare dalla nav immediatamente
+- Salvataggio silenzioso — nessun toast
+
+**DB:** la colonna `extra_tab_enabled BOOLEAN DEFAULT false` deve esistere nella tabella `users`. Se non esiste, crearla tramite migrazione Supabase.
+
+**Edge case:**
+- Utente riapre l'app con `extra_tab_enabled = true` → il tab Finance è già visibile nella nav al caricamento
+- Errore di salvataggio → toggle torna al valore precedente, nessun messaggio
