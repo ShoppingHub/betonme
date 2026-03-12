@@ -106,28 +106,30 @@ text-[#E24A4A]
 
 ```css
 /* === WORDMARK / LOGO === */
---color-wordmark-pad:   #FFFFFF;  /* "pad" portion of wordmark */
+--color-wordmark-opad:  #FFFFFF;  /* "opad" portion of wordmark */
 --color-wordmark-dotme: #B5453A;  /* ".me" portion — terracotta brick */
 ```
 
 **Struttura del logo:**
 
 ```
-[icon]  pad.me
-         ───┬──
-            └── ".me" in #B5453A
+opad  .me
+────  ───
+  ↑    ↑
+  │    └── #B5453A (terracotta)
+  └─────── #FFFFFF (bianco)
 ```
 
-- **Icon:** figura Uomo Vitruviano in cerchio con ingranaggio alla base — outline bianco/grigio chiaro, funge visivamente da "o" in "opad"
-- **"pad"** → `#FFFFFF` (bianco)
+- **"opad"** → `#FFFFFF` (bianco)
 - **"."** → `#B5453A` (terracotta)
 - **"me"** → `#B5453A` (terracotta)
+
+**Nota icona:** il logo finale prevede un'icona SVG (Uomo Vitruviano in cerchio) che sostituisce visivamente la "o" di "opad". L'asset SVG non è ancora disponibile — nel frattempo renderizzare il wordmark come testo `"opad.me"` con i colori sopra.
 
 **Regole d'uso wordmark:**
 - Il colore `#B5453A` è **esclusivamente del wordmark** — non usarlo in UI, pulsanti o grafici
 - Su sfondo `#0F2F33` (nav/sidebar): usare il wordmark completo con i colori sopra
-- L'icona è sempre in bianco — mai colorata con i token di sistema
-- In contesti molto piccoli (favicon, app icon): usare solo l'icona senza testo
+- Quando disponibile, l'icona SVG è sempre in bianco — mai colorata con i token di sistema
 
 ---
 
@@ -505,7 +507,7 @@ Accent (errors):     #E24A4A
 Graph positive:      #7DA3A0
 Graph neutral:       #8C9496
 Graph decline:       #BFA37A
-Wordmark "pad":      #FFFFFF
+Wordmark "opad":     #FFFFFF  ← wordmark only
 Wordmark ".me":      #B5453A  ← wordmark only, never in UI
 
 Font:        Inter, 600/500/400

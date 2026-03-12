@@ -29,16 +29,16 @@ Sostituisci tutte le occorrenze di `"BetonMe"` con `"opad.me"` in:
 Il wordmark `"opad.me"` è composto da due parti cromatiche distinte:
 
 ```
-pad  .me
-───  ───
- ↑    ↑
- │    └── colore #B5453A (terracotta)
- └─────── colore #FFFFFF (bianco)
+opad  .me
+────  ───
+  ↑    ↑
+  │    └── colore #B5453A (terracotta)
+  └─────── colore #FFFFFF (bianco)
 ```
 
 **Implementazione:**
 - Renderizza il wordmark come due `<span>` inline:
-  - `<span style="color: #FFFFFF">pad</span><span style="color: #B5453A">.me</span>`
+  - `<span style="color: #FFFFFF">opad</span><span style="color: #B5453A">.me</span>`
 - Font: Inter, font-weight 600
 - Non usare `#B5453A` in nessun altro elemento dell'UI — è esclusivo del wordmark
 
@@ -48,9 +48,9 @@ pad  .me
 
 ---
 
-### 3. Icona / logo (opzionale in questa story)
+### 3. Icona / logo (da fare in futuro)
 
-Il logo completo ha un'icona a sinistra del wordmark (figura Uomo Vitruviano in cerchio con ingranaggio alla base). Se l'asset SVG dell'icona è già disponibile nel progetto, affiancalo al wordmark nella sidebar e nell'header. Se non è disponibile, usare solo il wordmark testuale `"pad.me"` per ora.
+Il logo finale prevede un'icona SVG a sinistra del wordmark (figura Uomo Vitruviano in cerchio con ingranaggio alla base) che sostituisce visivamente la "o" di "opad". L'asset SVG non è ancora disponibile — **per ora usare solo il wordmark testuale `"opad.me"`** con i due colori sopra. Quando l'SVG sarà pronto verrà gestito in una story separata.
 
 ---
 
