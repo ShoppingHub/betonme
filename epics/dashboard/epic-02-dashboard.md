@@ -45,9 +45,9 @@ Per ogni attività, un'icona note permette di aggiungere un appunto libero legat
 - I chip dei giorni futuri (dopo oggi) sono grayed out e non tappabili
 - Se l'utente tenta un tap, non succede nulla (nessun feedback, nessun errore)
 
-### CTA per area standard vs. area Gym
+### CTA per area standard vs. area Gym vs. area Reduce quantitativa
 
-**Area standard:**
+**Area standard (tracking_mode = binary o non definito):**
 - CTA: `"Fatto"` (IT) / `"Done"` (EN)
 - Tap → registra il check-in direttamente
 
@@ -55,6 +55,13 @@ Per ogni attività, un'icona note permette di aggiungere un appunto libero legat
 - CTA: `"Apri scheda"` (IT) / `"Open session"` (EN)
 - Tap → naviga alla scheda del giorno di riferimento (Area Detail gym, Epic 11)
 - Il check-in viene registrato automaticamente all'apertura della scheda gym
+
+**Area Reduce quantitativa (tracking_mode = quantity_reduce, show_quick_add_home = true):**
+- Nessuna CTA binaria
+- Nella card compare il `<QuantityCounter>`: `today: N` + bottoni **–** · **+1**
+- Tap **+1** → incrementa il totale di oggi direttamente dalla Home
+- Il counter è la stessa interazione primaria della Area Detail (Epic 03, story-03-04)
+- Se `show_quick_add_home = false` → la card mostra solo il nome area e naviga all'Area Detail al tap
 
 ### Note per attività
 
@@ -90,18 +97,23 @@ Per ogni attività, un'icona note permette di aggiungere un appunto libero legat
 ├─────────────────────────────────────────┤
 │                                         │
 │  ┌───────────────────────────────────┐  │
-│  │ Palestra                          │  │  ← Area card
+│  │ Palestra                          │  │  ← Area card (binary gym)
 │  │ Giorno 2 — Gambe →               │  │  ← Indicatore gym day (se presente)
 │  │ [Apri scheda]           [📝]      │  │  ← CTA gym + icona note
 │  └───────────────────────────────────┘  │
 │                                         │
 │  ┌───────────────────────────────────┐  │
-│  │ Studio                            │  │
+│  │ Studio                            │  │  ← Area card (binary standard)
 │  │ [Osservato ✓]           [📝●]     │  │  ← Già loggato, nota presente (filled)
 │  └───────────────────────────────────┘  │
 │                                         │
 │  ┌───────────────────────────────────┐  │
-│  │ Social media                      │  │
+│  │ Sigarette          today: 4       │  │  ← Area card (quantity_reduce)
+│  │                 [–]  4  [+1]      │  │  ← QuantityCounter — nessuna CTA binaria
+│  └───────────────────────────────────┘  │
+│                                         │
+│  ┌───────────────────────────────────┐  │
+│  │ Social media                      │  │  ← Area card (binary standard)
 │  │ [Fatto]                 [📝]      │  │
 │  └───────────────────────────────────┘  │
 │                                         │
@@ -119,10 +131,13 @@ Per ogni attività, un'icona note permette di aggiungere un appunto libero legat
 | Background | `bg-[#1F4A50] rounded-xl p-4` |
 | Nome area | Testo principale, `text-[#EAEAEA]` |
 | Indicatore gym day | Testo piccolo `text-[#B9C0C1]`, tap → Area Detail gym |
-| CTA standard | `"Fatto"` / `"Done"` — segue stati Epic 03 |
+| CTA standard (binary) | `"Fatto"` / `"Done"` — segue stati Epic 03 |
 | CTA gym | `"Apri scheda"` / `"Open session"` → naviga Area Detail gym |
-| Icona note | Outline se nessuna nota, filled/colorata se nota presente |
+| QuantityCounter (quantity_reduce) | `today: N` + bottoni **–** · **+1** — nessuna CTA binaria |
+| Icona note | Outline se nessuna nota, filled/colorata se nota presente (solo aree binary) |
 | Ordine aree | Ordine di creazione dell'utente |
+
+> Le aree `quantity_reduce` non mostrano l'icona note nella Home — la nota è accessibile dall'Area Detail.
 
 ---
 
@@ -178,6 +193,9 @@ Stile: testo piccolo centrato, text-[#B9C0C1]
 - Annullamento check-in su giorno passato → stato torna a idle, nota non viene cancellata automaticamente
 - Nota vuota → non salvare (nessun record nel db)
 - 1500 caratteri raggiunti → input bloccato, contatore in rosso
+- Area `quantity_reduce` + giorno futuro → QuantityCounter disabilitato, nessuna interazione
+- Area `quantity_reduce` + `show_quick_add_home = false` → la card non mostra il counter; tap sulla card naviga ad Area Detail
+- Area `quantity_reduce` + giorno passato → QuantityCounter interattivo, salva il record per quel giorno
 
 ---
 
@@ -191,7 +209,7 @@ Stile: testo piccolo centrato, text-[#B9C0C1]
 - [ ] L'utente può annullare un check-in su giorni passati
 - [ ] La CTA delle aree standard è `"Fatto"` / `"Done"` (non "Log today")
 - [ ] La CTA dell'area Gym è `"Apri scheda"` / `"Open session"` → naviga Area Detail gym
-- [ ] Ogni card ha un'icona note che apre un campo testo per quella occorrenza (area + giorno)
+- [ ] Ogni card binary ha un'icona note che apre un campo testo per quella occorrenza (area + giorno)
 - [ ] La nota è salvata con `area_id + date`, max 1500 caratteri
 - [ ] L'icona note è visivamente distinta quando una nota è già presente
 - [ ] Al caricamento, le aree già loggata nel giorno selezionato mostrano stato "Osservato ✓"
@@ -199,6 +217,9 @@ Stile: testo piccolo centrato, text-[#B9C0C1]
 - [ ] L'empty state mostra il copy corretto nella lingua utente con CTA verso Attività
 - [ ] Le aree archiviate non compaiono
 - [ ] La Home non contiene grafici (i grafici sono in Progress — Epic 12)
+- [ ] Le aree `quantity_reduce` con `show_quick_add_home = true` mostrano il QuantityCounter (`today: N` + **–** · **+1**)
+- [ ] Tap +1 da Home aggiorna il totale della area `quantity_reduce` per il giorno selezionato
+- [ ] Le aree `quantity_reduce` con `show_quick_add_home = false` non mostrano il counter — tap naviga ad Area Detail
 
 ---
 
@@ -249,5 +270,6 @@ Il grafico aggregato e il MacroAreaSelector migrano in `src/pages/Progress.tsx` 
 - `story-02-05` — CTA Gym: "Apri scheda" → Area Detail gym — **da fare**
 - `story-02-06` — Indicatore gym day nella Home — **da fare**
 - `story-02-07` — Empty state Home (nessuna area → CTA Attività) — **da fare**
+- `story-02-08` — QuantityCounter in Home per aree quantity_reduce — **da fare**
 
 > Le story 02-01..02-05 precedenti (grafico aggregato) sono **deprecate**. Il comportamento è stato spostato in Epic 12 (Progress).

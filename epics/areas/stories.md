@@ -7,6 +7,7 @@ story-10-01 → Layout sezione Aree con 4 macro-categorie e liste area         �
 story-10-02 → CTA aggiungi per tipo + CTA globale header                     ✅ completata
 story-10-03 → Stati empty, loading e aree archiviate                          ✅ completata
 story-10-04 → Rename route /areas → /activities, label "Attività", back nav  ⏳ da fare
+story-10-05 → Badge totale giornaliero nelle card Reduce quantitative          ⏳ da fare
 ```
 
 > **Dipendenze:** Richiede Epic 04 (Area Detail) e Epic 05 (Add/Edit Area) per la navigazione. Epic 08 (i18n) per i label.
@@ -97,3 +98,27 @@ Continua Epic 10 di BetonMe. Aggiorna la route e il label della sezione Aree per
 **Aggiorna tutti i redirect interni** da `/areas*` a `/activities*` (form, CTA, nav link).
 
 **Comportamento invariato:** tutto il resto (4 sezioni, card, CTA, filtri) rimane identico.
+
+---
+
+## story-10-05 — Badge totale giornaliero nelle card Reduce quantitative ⏳
+
+Continua Epic 10 di BetonMe. Aggiorna le card delle aree `quantity_reduce` nella sezione Riduci / Reduce per mostrare il totale di oggi accanto al nome.
+
+**Condizione:**
+- L'area ha `tracking_mode = 'quantity_reduce'`
+
+**Cosa mostra nella card (variante rispetto alla card standard):**
+- Riga: nome area a sinistra + badge `"N oggi"` (IT) / `"N today"` (EN) al centro-destra + chevron `>` a destra
+- Il badge è testo piccolo `text-[#B9C0C1]` — secondario, non invadente
+- Tap → naviga ad Area Detail (invariato)
+
+**Logica del badge:**
+- Legge il record `habit_quantity_daily` WHERE `area_id = X` AND `date = oggi`
+- Se nessun record → mostra `"0 oggi"` / `"0 today"`
+- Se record presente → mostra il valore `quantity`
+
+**Cosa NON fare:**
+- Il badge non è interattivo (non è un bottone +1)
+- Non aggiungere colori di valutazione al badge (nessun rosso/verde per "meglio/peggio")
+- Non mostrare baseline o confronti nel badge

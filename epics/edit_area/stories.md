@@ -8,6 +8,7 @@ story-05-02 → Pill selector tipo area (Health / Study / Reduce / Finance)
 story-05-03 → Stepper frequenza 1–7
 story-05-04 → Integrazione Supabase: creazione area → redirect Dashboard
 story-05-05 → Modalità Edit: form pre-compilato + "Save changes" + "Archive area"
+story-05-06 → Tracking mode per aree Reduce: Binary / Quantity + campi quantitativi
 ```
 
 > **Dipendenze:** Richiede Epic 02 (Dashboard) completato. La nuova area creata deve apparire come card nella Dashboard.
@@ -122,3 +123,40 @@ Continua Epic 05 di BetonMe. Aggiungi la modalità modifica area (route `/areas/
 
 **Note:**
 - Modifica del tipo su area con dati storici: consentita, i dati esistenti rimangono
+
+---
+
+## story-05-06 — Tracking mode per aree Reduce ⏳
+
+Continua Epic 05 di BetonMe. Aggiungi la sezione "tracking mode" che compare solo quando il tipo area selezionato è **Reduce**.
+
+**Quando compare:**
+- Solo se l'utente ha selezionato la pill tipo `"Reduce"` (in Add o Edit)
+
+**Cosa mostra:**
+- Label: `"How do you want to track this?"`
+- 2 pill selezionabili (una alla volta):
+  - `"Simple (done / not done)"` → tracking_mode = `binary` (default)
+  - `"Count occurrences"` → tracking_mode = `quantity_reduce`
+
+**Se l'utente seleziona "Count occurrences" compaiono 2 campi aggiuntivi:**
+1. Label: `"What are you counting?"` — input testo, placeholder: `"e.g. cigarettes"` (unit_label)
+2. Label: `"Typical daily amount (your starting reference)"` — input numerico intero ≥ 0, placeholder: `"e.g. 10"` (baseline_initial)
+
+**Behavior:**
+- Default tracking mode per Reduce: Binary (non obbliga a riempire campi extra)
+- Con Quantity selezionato: Unit label obbligatorio (blocca submit se vuoto — errore inline: `"Please add a unit label"`)
+- Starting quantity ammette 0 come valore valido; vuoto blocca il submit
+- In modalità Edit per area già Quantity: campi pre-compilati con i valori salvati
+- Toggle aggiuntivo (solo Edit): `"Show quick-add on Home"` (booleano, default true) — determina se la card quick-add appare in Dashboard per questa area
+
+**Supabase — campi da salvare in `areas`:**
+- `tracking_mode`: `"binary"` | `"quantity_reduce"`
+- `unit_label`: stringa (solo per quantity_reduce)
+- `baseline_initial`: intero (solo per quantity_reduce)
+- `show_quick_add_home`: booleano (solo per quantity_reduce, default true)
+
+**Cosa NON fare:**
+- Non mostrare questa sezione per aree Health, Study, Finance
+- Non usare linguaggio di obiettivo ("Set your goal", "Target", "Limit")
+- Non aggiungere altri campi non specificati

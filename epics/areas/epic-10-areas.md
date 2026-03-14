@@ -73,6 +73,18 @@ Le macro-aree sono sempre visibili — anche se vuote — per aiutare l'utente a
 | Tap | Naviga ad Area Detail |
 | Stato archiviato | Non mostrato (filtro lato query) |
 
+### Variante: area Reduce quantitativa (`tracking_mode = quantity_reduce`)
+
+Le aree `quantity_reduce` nella sezione Riduci / Reduce mostrano un badge secondario con il totale di oggi, accanto al nome area.
+
+| Proprietà | Valore |
+|---|---|
+| Layout | Nome area a sinistra + badge `"N oggi"` (IT) / `"N today"` (EN) + chevron a destra |
+| Badge | Testo piccolo `text-[#B9C0C1]` — secondario rispetto al nome area |
+| Tap | Naviga ad Area Detail (dove l'utente può interagire col QuantityCounter completo) |
+
+> Il badge è solo informativo — non interattivo. Il quick-add principale è in Home (se `show_quick_add_home = true`).
+
 ---
 
 ## CTA Aggiungi
@@ -113,6 +125,7 @@ Skeleton animate-pulse per ogni sezione
 - Area archiviata → non compare nella lista (filtrata in query)
 - Nome area molto lungo → troncato con `text-ellipsis overflow-hidden`
 - Più di 5 aree per macro-categoria → scroll verticale naturale della pagina
+- Area `quantity_reduce` senza dati oggi → il badge mostra `"0 oggi"` / `"0 today"`
 
 ---
 
@@ -161,3 +174,4 @@ Skeleton animate-pulse per ogni sezione
 - `story-10-02` — CTA aggiungi per tipo + CTA globale header — **completata**
 - `story-10-03` — Stati empty, loading e area archiviata — **completata**
 - `story-10-04` — Rename route `/areas` → `/activities`, label "Attività", back nav da Area Detail — **da fare**
+- `story-10-05` — Badge totale giornaliero nelle card Reduce quantitative — **da fare**
