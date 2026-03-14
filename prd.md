@@ -91,6 +91,7 @@ App
 | 11 | Gym Card — scheda palestra | `epic-11-gym.md` | P2 |
 | 12 | Progress — osservazione traiettoria globale | `epic-12-progress.md` | P1 |
 | 13 | Abitudini da ridurre — tracciamento quantitativo | `epics/checkin/epic-03-checkin.md` · `epics/edit_area/epic-05-add-edit-area.md` | P1 |
+| 14 | Google Tasks Sync — sincronizzazione bidirezionale attività binarie | [`epics/google-tasks/epic-13-google-tasks.md`](epics/google-tasks/epic-13-google-tasks.md) | P2 |
 
 ---
 
@@ -149,6 +150,20 @@ Nuove tabelle per Gym Card:
 ```
 gym_sessions   → id, area_id, user_id, date
 gym_exercises  → id, session_id, name, sets, reps, weight_kg (nullable), notes (nullable), order
+```
+
+Nuove tabelle per Google Tasks Sync (Epic 14):
+```
+google_oauth_tokens → id, user_id, google_email, refresh_token (encrypted), access_token,
+                      access_token_expires_at, connected_at, status ('active' | 'auth_error')
+google_tasks_sync   → id, area_id, user_id, sync_date, google_task_id, google_tasklist_id,
+                      status ('pending' | 'completed' | 'deleted'), last_synced_at
+                      UNIQUE(area_id, sync_date)
+```
+
+Modifica tabella `areas` (Epic 14):
+```
+google_sync_enabled  BOOLEAN  DEFAULT false
 ```
 
 ---
