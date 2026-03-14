@@ -10,6 +10,7 @@ story-02-04 → Note per attività: icona, testo libero, salvataggio per area+gi
 story-02-05 → CTA Gym: "Apri scheda" → naviga Area Detail gym                     ⏳ da fare
 story-02-06 → Indicatore gym day nella Home                                        ⏳ da fare
 story-02-07 → Empty state Home (nessuna area → CTA Attività)                      ⏳ da fare
+story-02-08 → QuantityCounter in Home per aree quantity_reduce                    ⏳ da fare
 ```
 
 > **Prerequisiti:** Richiede story-09-04 (refactor nav, route `/activities`) e Epic 03 (CheckInButton).
@@ -174,3 +175,40 @@ Continua la Home di opad.me. Implementa l'empty state per utenti senza aree atti
 - IT: `"Cosa vuoi osservare?"` / EN: `"What do you want to observe?"`
 - IT: `"Aggiungi un'area in Attività per iniziare."` / EN: `"Add an area in Activities to start observing."`
 - CTA IT: `"Vai ad Attività"` / EN: `"Go to Activities"` → naviga a `/activities`
+
+---
+
+## story-02-08 — QuantityCounter in Home per aree quantity_reduce ⏳
+
+Continua la Home di opad.me. Integra il `<QuantityCounter>` nella lista attività per le aree con `tracking_mode = quantity_reduce` e `show_quick_add_home = true`.
+
+**Condizione di attivazione:**
+- L'area ha `tracking_mode = 'quantity_reduce'` AND `show_quick_add_home = true`
+
+**Cosa mostra nella card (al posto del bottone "Fatto"):**
+- Riga superiore: nome area + `"today: N"` in `text-[#B9C0C1]` sul lato destro
+- Riga inferiore: bottone **–** · numero N (tappabile per modifica manuale) · bottone **+1**
+
+**Behavior:**
+- Tap **+1** → totale +1 ottimistico, salva su Supabase (`habit_quantity_daily`)
+- Tap **–** → totale –1 (minimo 0)
+- Tap sul numero → input numerico inline, salva su blur o "Done"
+- Il totale viene caricato al cambio giorno dal selettore settimanale
+- Giorni passati: completamente interattivi
+- Giorno futuro: counter non interattivo (ma visibile in read-only se il giorno è mostrato)
+
+**Quando `show_quick_add_home = false`:**
+- La card non mostra il QuantityCounter
+- Tap sulla card → naviga ad Area Detail dell'area
+
+**Stile:**
+- La card mantiene lo stesso stile delle altre card (`bg-[#1F4A50] rounded-xl p-4`)
+- I bottoni + e – hanno `min-height: 44px`
+- Il tono dei bottoni è warm (`#BFA37A`) — coerente con il colore Reduce nel brand system
+- La card è visivamente distinta dalle card binarie ma non più prominente
+
+**Cosa NON fare:**
+- Non aggiungere icona note a queste card nella Home
+- Non mostrare indicatori di tendenza (frecce su/giù, colori di performance)
+- Non aggiungere messaggi di feedback valutativi
+- Non dominare visivamente la Home — la card deve rimanere discreta

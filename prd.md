@@ -90,6 +90,7 @@ App
 | 10 | Attività — 4 macro-categorie + gestione aree | `epic-10-areas.md` | P0 |
 | 11 | Gym Card — scheda palestra | `epic-11-gym.md` | P2 |
 | 12 | Progress — osservazione traiettoria globale | `epic-12-progress.md` | P1 |
+| 13 | Abitudini da ridurre — tracciamento quantitativo | `epics/checkin/epic-03-checkin.md` · `epics/edit_area/epic-05-add-edit-area.md` | P1 |
 
 ---
 
@@ -99,12 +100,15 @@ RLS abilitato su tutte le tabelle.
 
 ```
 users        → id, settings_score_visible (default false), settings_notifications, extra_tab_enabled (default false)
-areas        → id, user_id, name, type, frequency_per_week, archived_at
+areas        → id, user_id, name, type, frequency_per_week, archived_at,
+               tracking_mode (binary | quantity_reduce), unit_label, baseline_initial, show_quick_add_home
 checkins     → id, area_id, user_id, date, completed — UNIQUE(area_id, date)
 score_daily  → id, area_id, date, daily_score, cumulative_score, consecutive_missed
+habit_quantity_daily → id, area_id, date, quantity, source (quick_add | manual_edit | system_init),
+                       created_at, updated_at — UNIQUE(area_id, date)
 ```
 
-**Score logic (edge function o trigger):**
+**Score logic per `tracking_mode = binary` (invariato):**
 ```
 completed       → +1.0
 primo mancato   →  0.0
@@ -113,7 +117,21 @@ terzo+ mancato  → -1.0
 cumulative_score = previous + daily_score
 ```
 
-> Il `cumulative_score` alimenta il grafico. Non viene mai mostrato come numero (default off).
+**Evaluation logic per `tracking_mode = quantity_reduce` (interno, non mostrato):**
+```
+if history_days < 7:
+    reference_qty = baseline_initial
+else:
+    reference_qty = moving_average(last_7_days)
+
+delta = qty_today - reference_qty
+→ improving : qty_today < reference_qty
+→ stable    : qty_today ≈ reference_qty
+→ worsening : qty_today > reference_qty
+```
+
+> Il `cumulative_score` alimenta il grafico delle aree binarie. Non viene mai mostrato come numero (default off).
+> Le aree `quantity_reduce` mostrano il grafico della quantità giornaliera — non usa `score_daily`.
 
 ---
 
@@ -141,7 +159,8 @@ gym_exercises  → id, session_id, name, sets, reps, weight_kg (nullable), notes
 - Autenticazione email/password + OAuth Google
 - Lingua IT / EN (rilevamento browser + cambio in Settings)
 - 4 tipi area (Health, Study, Reduce, Finance)
-- Check-in binario giornaliero
+- Check-in binario giornaliero per aree standard
+- Tracciamento quantitativo giornaliero per abitudini da ridurre (`quantity_reduce`)
 - Dashboard con grafico totale aggregato + filtro per macro-area
 - Sezione Aree con 4 macro-categorie
 - Grafico traiettoria per area (Area Detail)
