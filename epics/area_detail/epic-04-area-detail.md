@@ -178,7 +178,7 @@ Testo small muted, centrato
 - Area appena creata senza giorni configurati → sezione giorni mostra chip tutti inattivi
 - Area con 0 appunti → empty state sezione appunti
 - Back navigation dopo edit area → ritorna a `/activities/:id` (non a `/activities`)
-- Area Gym con scheda → la GymCard (Epic 11) NON compare in Area Detail — la scheda è accessibile solo dalla Home via CTA "Apri scheda"
+- Area Gym con scheda → in Area Detail compare la sezione scheda palestra **solo per configurazione** (`GymWizard` se non esiste ancora, `GymPlanEditor` + `GymHistory` se già configurata). Il `GymSessionView` (esecuzione della sessione) è accessibile solo dalla Home via CTA "Apri scheda"
 - Aree `quantity_reduce` → la sezione giorni programmati funziona esattamente come per le aree binary
 
 ---
@@ -207,7 +207,7 @@ Testo small muted, centrato
 
 - Nessun grafico — i trend vivono in Progress (Epic 12)
 - Nessun check-in — il log è solo in Home (Epic 02)
-- La GymCard non compare qui — accessibile dalla Home
+- Per aree `is_gym = true`: compare la sezione scheda palestra con `GymWizard` (se nessun programma) o `GymPlanEditor` + `GymHistory` (se programma esistente). `GymSessionView` non compare mai in Area Detail — la sessione si avvia solo da Home
 - Brand tokens: `brand-system/brand_system.md`
 
 ---
@@ -217,7 +217,7 @@ Testo small muted, centrato
 - Epic 02 (Home) — impatto sul filtro giorni nel WeekSelector
 - Epic 05 (Add/Edit Area) — navigazione al form di modifica
 - Epic 08 (i18n) — label IT/EN chip giorni + copy sezioni
-- Epic 11 (Gym) — la GymCard non compare qui (rimozione)
+- Epic 11 (Gym) — la GymCard compare in Area Detail solo per la parte editor/storico (non la sessione)
 - Epic 12 (Progress) — grafico e heatmap migrati lì
 
 ---
@@ -230,7 +230,13 @@ Testo small muted, centrato
 |---|---|
 | Bottone check-in (`handleCheckIn`, `handleAutoCheckIn`) | Log solo in Home |
 | `<CalendarHeatmap>` | Migrato in Progress |
-| `<GymCard>` in Area Detail | Accessibile solo da Home |
+| `<GymSessionView>` dentro GymCard | La sessione si avvia solo da Home |
+
+| Da mantenere in Area Detail | Motivo |
+|---|---|
+| `<GymWizard>` | Crea la scheda palestra se non esiste ancora |
+| `<GymPlanEditor>` | Modifica struttura scheda (giorni, gruppi, esercizi) |
+| `<GymHistory>` | Storico sessioni — cronologia, coerente con il ruolo della schermata |
 
 | Da aggiungere | Componente |
 |---|---|

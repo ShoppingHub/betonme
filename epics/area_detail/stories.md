@@ -23,8 +23,14 @@ La schermata Area Detail è una schermata di configurazione e memoria — non di
 **Rimuovi completamente:**
 - Il bottone check-in (qualsiasi `<CheckInButton>`, `handleCheckIn`, `handleAutoCheckIn`)
 - Il `<CalendarHeatmap>` (migrato in Progress)
-- Il `<GymCard>` in questa schermata (accessibile solo da Home)
 - Il `<TimeRangeSelector>` e qualsiasi grafico
+
+**Nella `<GymCard>`, rimuovi solo `<GymSessionView>` (esecuzione sessione) e il prop `onAutoCheckIn`.**
+Mantieni in Area Detail:
+- `<GymWizard>` — per creare la scheda se non esiste ancora
+- `<GymPlanEditor>` — per modificare struttura scheda (giorni, gruppi, esercizi)
+- `<GymHistory>` — storico sessioni passate
+La sezione scheda palestra compare solo per aree `is_gym = true` (vedi Epic 05, story-05-07).
 
 **Header da costruire:**
 - `←` back navigation verso `/activities`
@@ -32,9 +38,10 @@ La schermata Area Detail è una schermata di configurazione e memoria — non di
 - `<AreaTypePill>` accanto al nome
 - Link testuale a destra: `"Modifica"` (IT) / `"Edit"` (EN) → naviga a `/activities/:id/edit`
 
-**Struttura schermata (3 sezioni verticali, per ora con placeholder):**
+**Struttura schermata (sezioni verticali, per ora con placeholder):**
 1. Sezione `"Giorni programmati"` / `"Scheduled days"` — placeholder, verrà costruita in story-04-02
 2. Sezione `"Appunti"` / `"Notes"` — placeholder, verrà costruita in story-04-03
+3. Se `is_gym = true`: sezione scheda palestra (`<GymWizard>` o `<GymPlanEditor>` + `<GymHistory>`) — già funzionante, da mantenere
 
 **Loading state:**
 - Skeleton: 2 rettangoli `bg-card animate-pulse rounded-xl h-24`

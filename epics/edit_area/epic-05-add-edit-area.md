@@ -7,7 +7,7 @@ Permettere all'utente di creare o modificare un'area di vita in meno di 10 secon
 
 ## Behavior
 
-Il form ha esattamente 3 campi per le aree standard. Per le aree di tipo **Reduce**, compare una sezione opzionale per scegliere la modalità di tracciamento. La creazione non genera schermate di celebrazione — al completamento l'utente torna alla Dashboard e vede la nuova card.
+Il form ha esattamente 3 campi per le aree standard. Per le aree di tipo **Health**, compare un selettore opzionale per specificare se si tratta di un'attività palestra (`is_gym`). Per le aree di tipo **Reduce**, compare una sezione opzionale per scegliere la modalità di tracciamento. La creazione non genera schermate di celebrazione — al completamento l'utente torna alla Home e vede la nuova card.
 
 La stessa schermata è usata sia per la creazione (Add) che per la modifica (Edit) — il titolo dell'header cambia di conseguenza.
 
@@ -56,13 +56,33 @@ La stessa schermata è usata sia per la creazione (Add) che per la modifica (Edi
 |---|---|---|---|---|
 | Nome area | Text input | `"e.g. Morning walk"` | vuoto | sempre |
 | Tipo | 4 pill selector | Health · Study · Reduce · Finance | nessuno | sempre |
+| Tipo attività (sub-tipo) | 2 pill selector | Generica · Palestra | Generica | solo tipo Health |
 | Frequenza / settimana | Stepper 1–7 | — | 7 | sempre |
 | Tracking mode | 2 pill selector | Binary · Quantity | Binary | solo tipo Reduce |
 | Unit label | Text input | `"e.g. cigarettes"` | vuoto | solo Quantity |
 | Starting quantity | Number input | `"e.g. 10"` | — | solo Quantity |
 
+> Il campo **Tipo attività** (Generica · Palestra) compare solo quando il tipo selezionato è **Health**.
 > I campi **Tracking mode**, **Unit label** e **Starting quantity** compaiono solo quando il tipo selezionato è **Reduce**.
 > **Unit label** e **Starting quantity** compaiono solo se il tracking mode è **Quantity**.
+
+---
+
+## Selettore Tipo Attività (sub-tipo Health)
+
+Quando il tipo selezionato è **Health**, compare un secondo selettore pill con 2 opzioni:
+
+| Pill | Valore DB | Label IT | Label EN | Descrizione |
+|---|---|---|---|---|
+| Generica | `is_gym = false` | `"Generica"` | `"Generic"` | Attività salute standard — check-in binario |
+| Palestra | `is_gym = true` | `"Palestra"` | `"Gym"` | Abilita la scheda allenamento in Area Detail |
+
+- Default: **Generica** (il secondo selettore non obbliga nessuna scelta aggiuntiva)
+- Selezionando **Palestra**: il campo `is_gym = true` viene salvato su `areas`
+- Se si cambia tipo da Health a un altro: `is_gym` viene azzerato a `false`
+- In modalità Edit: il selettore è pre-compilato con il valore salvato
+
+> Questo selettore sostituisce il riconoscimento per nome (`/^(gym|palestra)$/i`) attualmente nel codebase. Da rimuovere ovunque.
 
 ---
 
@@ -119,7 +139,10 @@ Solo un tipo selezionabile alla volta.
 
 ## Acceptance Criteria
 
-- [ ] Il form ha esattamente 3 campi (nome, tipo, frequenza) per aree non-Reduce
+- [ ] Il form ha esattamente 3 campi (nome, tipo, frequenza) per aree non-Reduce e non-Health-Palestra
+- [ ] Selezionando tipo Health → compare il selettore sub-tipo (Generica · Palestra), default Generica
+- [ ] Selezionando Palestra → `is_gym = true` salvato su `areas`
+- [ ] Il riconoscimento per nome `/^(gym|palestra)$/i` è rimosso dal codebase e sostituito da `is_gym`
 - [ ] La CTA è disabilitata senza nome e tipo compilati
 - [ ] Al submit, l'area è creata e la Dashboard mostra la nuova card
 - [ ] Nessuna schermata di celebrazione dopo la creazione
@@ -173,3 +196,4 @@ Solo un tipo selezionabile alla volta.
 - `story-05-04` — Integrazione Supabase: creazione e modifica area
 - `story-05-05` — Archiviazione area
 - `story-05-06` — Sezione Tracking mode per aree Reduce (Binary / Quantity) + campi quantitativi
+- `story-05-07` — Selettore sub-tipo Health (Generica · Palestra) + campo `is_gym` su DB

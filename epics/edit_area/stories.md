@@ -126,6 +126,39 @@ Continua Epic 05 di BetonMe. Aggiungi la modalità modifica area (route `/areas/
 
 ---
 
+## story-05-07 — Selettore sub-tipo Health (Generica · Palestra)
+
+Continua Epic 05 di opad.me. Aggiungi il selettore **tipo attività** che compare solo quando il tipo area selezionato è **Health**.
+
+**Aggiungi il campo `is_gym` alla tabella `areas`:**
+- Tipo: `boolean`, default `false`
+- Nessuna migrazione distruttiva — tutte le aree esistenti avranno `is_gym = false`
+
+**UI — quando compare:**
+- Solo se l'utente ha selezionato la pill tipo `"Health"` (in Add o Edit)
+
+**Cosa mostra:**
+- Label: `"Tipo attività"` (IT) / `"Activity type"` (EN)
+- 2 pill selezionabili (una alla volta):
+  - `"Generica"` (IT) / `"Generic"` (EN) → `is_gym = false` (default)
+  - `"Palestra"` (IT) / `"Gym"` (EN) → `is_gym = true`
+
+**Behavior:**
+- Default: **Generica** — non obbliga l'utente a scegliere esplicitamente
+- In modalità Edit: il selettore è pre-compilato con il valore salvato
+- Se l'utente cambia tipo da Health a qualsiasi altro tipo: `is_gym` si azzera a `false`
+- Nessun campo aggiuntivo compare selezionando Palestra — la scheda palestra si configura in Area Detail
+
+**Impatto su Home e Area Detail:**
+- Rimuovi ovunque il riconoscimento per nome `/^(gym|palestra)$/i`
+- Sostituisci con `area.is_gym === true`
+- Questo riguarda: `src/pages/Index.tsx`, `src/pages/AreaDetail.tsx` e qualsiasi altro punto del codebase
+
+**Supabase — campo da salvare in `areas`:**
+- `is_gym`: `boolean`, default `false`
+
+---
+
 ## story-05-06 — Tracking mode per aree Reduce ⏳
 
 Continua Epic 05 di BetonMe. Aggiungi la sezione "tracking mode" che compare solo quando il tipo area selezionato è **Reduce**.
