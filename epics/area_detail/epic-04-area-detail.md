@@ -1,138 +1,248 @@
-# Epic 04 — Area Detail
+# Epic 04 — Area Detail (Scheda Attività)
 
 ## Obiettivo
-Offrire all'utente una visione approfondita della traiettoria di una singola area, con la possibilità di osservare il pattern a diverse scale temporali e visualizzare il calendario storico.
+
+Offrire all'utente un punto unico per **configurare** un'attività: modificarne i metadati, assegnare i giorni della settimana alle ripetizioni programmate, e consultare la cronologia degli appunti scritti nel tempo.
+
+> La schermata è gestione e memoria — non è interazione né osservazione. Il log si fa in Home (Epic 02). I trend si osservano in Progress (Epic 12).
 
 ---
 
 ## Behavior
 
-L'Area Detail è una schermata di analisi. Il grafico è più grande rispetto alla Dashboard (60vh) e occupa la parte dominante dello schermo. In basso è presente un heatmap a riga singola degli ultimi 30 giorni.
+L'utente arriva all'Area Detail tappando un'area nella tab Attività (`/activities`). Trova tre sezioni verticali:
 
-Il check-in del giorno può essere eseguito anche da questa schermata (stesso comportamento dell'Epic 03).
+1. **Modifica attività** — CTA nell'header per editare nome, tipo e frequenza
+2. **Giorni programmati** — chip dei 7 giorni della settimana per assegnare le ricorrenze settimanali
+3. **Cronologia appunti** — lista degli appunti scritti nel tempo per questa attività
+
+Non c'è bottone di check-in. Non c'è grafico. Non c'è heatmap.
 
 ---
 
 ## Flussi
 
-### Visualizzazione Area Detail
-1. L'utente tappa il corpo di una TrajectoryCard in Dashboard
-2. Naviga all'Area Detail con transizione Framer Motion (fade + slide 300ms)
-3. Vede: header con nome area + back navigation, time range selector, grafico 60vh, heatmap 30 giorni
+### Modifica attività
 
-### Cambio Time Range
-1. L'utente tappa un pill (30d / 90d / 365d)
-2. Il grafico si aggiorna con i dati del periodo selezionato
+1. L'utente tappa il link/icona "Modifica" nell'header
+2. Naviga ad Add/Edit Area (Epic 05) in modalità edit, route `/activities/:id/edit`
 
-### Modifica Area
-1. L'utente tappa il link testuale "Edit area" in fondo alla schermata
-2. Naviga ad Add/Edit Area (Epic 05) in modalità edit
+### Assegnazione giorni programmati
+
+1. L'utente vede 7 chip dei giorni della settimana (Lun…Dom / Mon…Sun)
+2. I chip già assegnati sono evidenziati
+3. Tap su un chip disattivato → lo attiva (se il numero di giorni selezionati non supera `frequency_per_week`)
+4. Tap su un chip attivo → lo disattiva
+5. Ogni modifica viene salvata immediatamente (auto-save, aggiornamento ottimistico)
+6. Se tutti e 7 i slot sono occupati (`frequency_per_week = 7`), tutti i chip sono attivi e non modificabili
+
+### Consultazione cronologia appunti
+
+1. La sezione "Appunti / Notes" mostra la lista degli appunti scritti in Home per questa attività
+2. Ogni voce mostra: data + testo
+3. Ordine cronologico inverso (più recente in cima)
+4. Gli appunti sono **read-only** qui — la modifica avviene in Home per ogni singola occorrenza (area + giorno)
 
 ---
 
 ## Layout
 
 ```
-┌─────────────────────────────┐
-│ ← [Nome Area]    [edit]     │  ← Header con back navigation
-├─────────────────────────────┤
-│  30d  │  90d  │  365d       │  ← TimeRangeSelector
-├─────────────────────────────┤
-│                             │
-│   [Grafico — 60vh]          │
-│                             │
-├─────────────────────────────┤
-│   Ultimi 30 giorni          │
-│   □□■□■■□■□■□□■□■□         │  ← CalendarHeatmap
-├─────────────────────────────┤
-│   [Score: —]                │  ← Solo se settings_score_visible=true
-├─────────────────────────────┤
-│  Home · Areas · Finance · ⚙ │
-└─────────────────────────────┘
+┌─────────────────────────────────────────┐
+│ ←  [Nome Area]  [pill tipo]   [Modifica]│  ← Header
+├─────────────────────────────────────────┤
+│                                         │
+│  Giorni programmati                     │  ← Sezione 1
+│  Seleziona N giorni                     │  ← subtitolo con slot disponibili
+│  [Lun] [Mar] [Mer] [Gio] [Ven] [Sab] [Dom] │  ← chip 7 giorni
+│                                         │
+├─────────────────────────────────────────┤
+│                                         │
+│  Appunti / Notes                        │  ← Sezione 2
+│  ┌─────────────────────────────────┐    │
+│  │ 12 mar 2026                     │    │
+│  │ Testo dell'appunto…             │    │
+│  └─────────────────────────────────┘    │
+│  ┌─────────────────────────────────┐    │
+│  │ 8 mar 2026                      │    │
+│  │ Testo dell'appunto…             │    │
+│  └─────────────────────────────────┘    │
+│                                         │
+│  (empty state se nessun appunto)        │
+│                                         │
+├─────────────────────────────────────────┤
+│  [Nav]                                  │
+└─────────────────────────────────────────┘
 ```
 
 ---
 
-## Specifiche CalendarHeatmap
+## Sezione Giorni Programmati
 
-| Tipo giorno | Stile |
+### Regole
+
+| Caso | Comportamento |
 |---|---|
-| Completato | `bg-[#7DA3A0]/60 rounded-sm w-7 h-7` |
-| Mancato | `bg-[#BFA37A]/40 rounded-sm w-7 h-7` |
-| Futuro | `bg-[#1F4A50]/30 rounded-sm w-7 h-7` |
-| Gap tra celle | `gap-0.5` |
-| Layout | Riga singola orizzontale, scroll se necessario |
+| `frequency_per_week = 7` | Tutti e 7 i chip sono attivi e non modificabili |
+| `frequency_per_week = 1` | L'utente può selezionare al massimo 1 giorno |
+| `frequency_per_week = N` | L'utente può selezionare al massimo N giorni |
+| Nessun giorno configurato | Sezione mostra i chip tutti inattivi — il subtitolo invita a selezionare |
+| N giorni già selezionati | Se si tenta di aggiungere oltre il limite, il chip è visivamente disabilitato |
 
-> ⚠️ Nessun contatore streak. Nessun "best streak". Nessuna fiamma. Nessuna celebrazione per giorni consecutivi.
+### Dati
+
+- Tabella nuova: `area_scheduled_days`
+- Campi: `area_id`, `day_of_week` (integer: 1=Lun, 2=Mar, …, 7=Dom — ISO week: lunedì = 1)
+- Una riga per giorno assegnato
+- `ON CONFLICT` per evitare duplicati
+
+### Impatto su Home (Epic 02)
+
+- Se un'area ha giorni configurati → in Home compare **solo** nei giorni della settimana assegnati
+- Se un'area **non** ha giorni configurati → compare ogni giorno (backward compat)
+- Il confronto usa il `day_of_week` del giorno selezionato nel WeekSelector
+
+### Chip UI
+
+| Stato | Stile |
+|---|---|
+| Inattivo (non assegnato) | Bordo `border-border`, testo `text-muted-foreground`, bg trasparente |
+| Attivo (assegnato) | Bg `bg-primary/20`, bordo `border-primary`, testo `text-primary` |
+| Disabilitato (limite raggiunto) | `opacity-40`, non interattivo — solo per i chip non ancora selezionati |
+| Non modificabile (freq = 7) | Tutti attivi, nessun tap |
+
+### Subtitolo sezione
+
+- IT: `"Seleziona {N} giorni"` dove N = `frequency_per_week` meno il numero già selezionato
+- EN: `"Select {N} days"`
+- Se N = 0 (tutti i giorni già assegnati): `"Tutti i giorni assegnati"` / `"All days assigned"`
+- Se `frequency_per_week = 7`: nessun subtitolo — sezione informativa
 
 ---
 
-## Visualizzazione Score
+## Sezione Cronologia Appunti
 
-- Default: nascosto
-- Visibile solo se `settings_score_visible = true` nelle impostazioni utente
-- Se visibile: mostrato come numero sotto l'heatmap, label `"Trajectory score"`
-- Se nascosto: l'area non compare
+### Dati
+
+- Fonte: tabella `activity_notes` (`area_id`, `date`, `content`, `user_id`)
+- Query: tutti i record dove `area_id = :id AND user_id = :user_id`, ordinati per `date DESC`
+
+### Layout voce
+
+| Elemento | Stile |
+|---|---|
+| Data | `text-sm text-muted-foreground` — formato localizzato (es. "12 mar 2026" / "Mar 12, 2026") |
+| Testo | `text-base text-foreground` |
+| Card | `bg-card rounded-xl p-4` |
+
+### Empty state
+
+- IT: `"Nessun appunto ancora. Gli appunti si aggiungono dalla Home durante il log."`
+- EN: `"No notes yet. Notes are added from Home when logging."`
+- Stile: testo piccolo centrato, `text-muted-foreground`
 
 ---
 
-## Edit Link
+## Header
 
-- Posizionato in fondo alla schermata, sopra il bottom nav
-- Stile: testo small, `text-[#B9C0C1]`, non un bottone
-- Label: `"Edit area"`
+| Elemento | Dettaglio |
+|---|---|
+| Back nav `←` | Torna a `/activities` |
+| Nome area | `text-[18px] font-semibold` |
+| Pill tipo | `<AreaTypePill>` esistente |
+| CTA Modifica | Link testuale `"Modifica"` (IT) / `"Edit"` (EN), a destra nell'header |
 
 ---
 
 ## Stati UI
 
-### Empty State (nessun dato per l'area)
+### Loading
+
 ```
-Icona: TrendingUp (Lucide), muted
-Testo: "Keep observing. Your trajectory takes shape over days."
-Nessuna CTA
+Skeleton chip giorni: 7 rettangoli animate-pulse rounded-full
+Skeleton appunti: 2 card bg-card animate-pulse rounded-xl h-20
 ```
 
-### Loading State
+### Area non trovata
+
 ```
-Skeleton grafico: bg-[#1F4A50] animate-pulse rounded-xl h-[60vh]
-Skeleton heatmap: riga di celle bg-[#1F4A50] animate-pulse
+Testo: "Attività non trovata" / "Activity not found"
+Testo small muted, centrato
 ```
 
 ---
 
 ## Edge Case
 
-- Area senza dati (appena creata) → empty state corretto
-- Time range 365d con meno di 365 giorni di dati → mostra i dati disponibili
-- Score nascosto ma richiesto via URL diretto → rispettare la preferenza utente
-- Back navigation con modifiche non salvate (da edit) → nessun modale di conferma in MVP
+- Area con `frequency_per_week = 7` → tutti i chip attivi, nessuna interazione possibile
+- Area appena creata senza giorni configurati → sezione giorni mostra chip tutti inattivi
+- Area con 0 appunti → empty state sezione appunti
+- Back navigation dopo edit area → ritorna a `/activities/:id` (non a `/activities`)
+- Area Gym con scheda → la GymCard (Epic 11) NON compare in Area Detail — la scheda è accessibile solo dalla Home via CTA "Apri scheda"
+- Aree `quantity_reduce` → la sezione giorni programmati funziona esattamente come per le aree binary
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] Il grafico occupa 60vh e usa `type="monotone"` Recharts
-- [ ] Il time range selector funziona e aggiorna il grafico
-- [ ] Il CalendarHeatmap mostra 30 giorni con i tre stili corretti (completato / mancato / futuro)
-- [ ] Nessun streak counter o label "best streak" presente
-- [ ] Lo score numerico appare solo se `settings_score_visible = true`
-- [ ] Il link "Edit area" è testo small in `#B9C0C1`, non un bottone
-- [ ] La back navigation riporta alla Dashboard
-- [ ] L'empty state mostra il copy corretto senza CTA
+- [ ] Nessun bottone check-in in questa schermata
+- [ ] Nessun grafico o heatmap in questa schermata
+- [ ] Il link "Modifica" nell'header naviga a `/activities/:id/edit`
+- [ ] La sezione giorni mostra 7 chip con i giorni selezionati evidenziati
+- [ ] Tap su chip non selezionato → lo assegna (se sotto il limite)
+- [ ] Tap su chip selezionato → lo rimuove
+- [ ] Il numero massimo di giorni selezionabili = `frequency_per_week`
+- [ ] Con `frequency_per_week = 7` i chip sono tutti attivi e non interattivi
+- [ ] Le modifiche ai giorni si salvano immediatamente (auto-save ottimistico)
+- [ ] La sezione appunti mostra le note per questa area in ordine cronologico inverso
+- [ ] Ogni nota mostra data e testo
+- [ ] Se nessuna nota: empty state con copy corretto
+- [ ] La back nav torna a `/activities`
+- [ ] Il subtitolo della sezione giorni indica quanti slot rimangono
+- [ ] Label dei chip seguono la lingua utente (IT/EN)
 
 ---
 
 ## Note UI
 
-- Componenti: `<CalendarHeatmap>`, `<TimeRangeSelector>`, `<CheckInButton>`
-- Brand tokens: `brand-system/betonme_brand_system_lovable.md`
+- Nessun grafico — i trend vivono in Progress (Epic 12)
+- Nessun check-in — il log è solo in Home (Epic 02)
+- La GymCard non compare qui — accessibile dalla Home
+- Brand tokens: `brand-system/brand_system.md`
+
+---
+
+## Dipendenze
+
+- Epic 02 (Home) — impatto sul filtro giorni nel WeekSelector
+- Epic 05 (Add/Edit Area) — navigazione al form di modifica
+- Epic 08 (i18n) — label IT/EN chip giorni + copy sezioni
+- Epic 11 (Gym) — la GymCard non compare qui (rimozione)
+- Epic 12 (Progress) — grafico e heatmap migrati lì
+
+---
+
+## Stato implementazione
+
+**Da riscrivere** — l'attuale `src/pages/AreaDetail.tsx` va refactorizzato:
+
+| Da rimuovere | Motivo |
+|---|---|
+| Bottone check-in (`handleCheckIn`, `handleAutoCheckIn`) | Log solo in Home |
+| `<CalendarHeatmap>` | Migrato in Progress |
+| `<GymCard>` in Area Detail | Accessibile solo da Home |
+
+| Da aggiungere | Componente |
+|---|---|
+| Chip picker giorni | `<ScheduledDaysPicker>` |
+| Lista appunti | `<NotesHistory>` |
+| Tabella DB | `area_scheduled_days` |
 
 ---
 
 ## Stories
 
-- `story-04-01` — Layout Area Detail con header e back navigation
-- `story-04-02` — Grafico 60vh con TimeRangeSelector
-- `story-04-03` — CalendarHeatmap 30 giorni
-- `story-04-04` — Visibilità score condizionale
+- `story-04-01` — Layout Area Detail: header + modifica + struttura sezioni — **da riscrivere**
+- `story-04-02` — Sezione giorni programmati: chip picker + auto-save — **nuova**
+- `story-04-03` — Sezione cronologia appunti: lista read-only — **nuova**
+- `story-04-04` — Impatto su Home: filtro attività per giorno della settimana — **nuova**
