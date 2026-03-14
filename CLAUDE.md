@@ -1,8 +1,8 @@
-# CLAUDE.md — BetonMe
+# CLAUDE.md — opad.me
 
 ## Cos'è questo progetto
 
-**BetonMe** è un'app mobile-first di osservazione del benessere personale.
+**opad.me** è un'app mobile-first di osservazione del benessere personale.
 Non è un habit tracker. Non è uno strumento di produttività. È uno specchio neutro dei pattern comportamentali nel tempo — l'unico feedback è il grafico.
 
 Questo repository è l'**hub di specificazione**: contiene PRD, brand system, epic, stories, roadmap e prototipi.
@@ -82,9 +82,11 @@ betonme/
 │   ├── gym/
 │   │   ├── epic-11-gym.md           ← gym card / scheda palestra
 │   │   └── stories.md
-│   └── progress/
-│       ├── epic-12-progress.md      ← Progress: osservazione traiettoria globale
-│       └── stories.md
+│   ├── progress/
+│   │   ├── epic-12-progress.md      ← Progress: osservazione traiettoria globale
+│   │   └── stories.md
+│   └── rebrand/
+│       └── stories.md               ← rename BetonMe → opad.me + wordmark colori
 │
 ├── lovable/
 │   └── prompt-iniziale.md           ← prompt di setup iniziale per Lovable

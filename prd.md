@@ -1,4 +1,4 @@
-# BetonMe — Product Requirements Document
+# opad.me — Product Requirements Document
 ### MVP · Personal Wellbeing Trajectory App · v2.0
 ### Target: **Lovable** · March 2026 · `CONFIDENTIAL`
 
@@ -6,7 +6,7 @@
 
 ## ⚡ TL;DR
 
-BetonMe è una **mobile-first React web app** di osservazione del benessere personale.
+opad.me è una **mobile-first React web app** di osservazione del benessere personale.
 Gli utenti registrano un'azione giornaliera per area di vita. Il grafico è il prodotto.
 Tono: calmo, neutro, riflessivo. Un journal personale, non una fitness app.
 
@@ -14,7 +14,7 @@ Tono: calmo, neutro, riflessivo. Un journal personale, non una fitness app.
 
 ## 1. Prodotto
 
-BetonMe rende **visibile la traiettoria del benessere personale nel tempo** tramite grafici longitudinali.
+opad.me rende **visibile la traiettoria del benessere personale nel tempo** tramite grafici longitudinali.
 
 Non è un habit tracker. Non è un goal-setting tool. È un **sistema di osservazione** — uno specchio neutro dei pattern comportamentali.
 

@@ -1,4 +1,4 @@
-# BetonMe — Brand System for Lovable
+# opad.me — Brand System for Lovable
 ### Design Tokens & UI Rules · MVP · v1.1
 ### Target: **Lovable** · March 2026 · `CONFIDENTIAL`
 
@@ -6,7 +6,7 @@
 
 ## ⚡ TL;DR for Lovable
 
-BetonMe is a **calm observation system**, not a habit tracker.  
+opad.me is a **calm observation system**, not a habit tracker.  
 The visual identity must communicate: *"you are watching yourself, not being watched."*  
 Dark teal surfaces. Desaturated graph lines. Generous space. No rewards. No pressure.
 
@@ -99,6 +99,37 @@ text-[#E24A4A]
 | Negative trajectory | Always `#BFA37A` (warm amber) — never red |
 | Accent `#E24A4A` | Errors and destructive actions only |
 | White or light surfaces | Only for modals and overlapping sheets |
+
+---
+
+### 2.6 Wordmark Tokens
+
+```css
+/* === WORDMARK / LOGO === */
+--color-wordmark-opad:  #FFFFFF;  /* "opad" portion of wordmark */
+--color-wordmark-dotme: #B5453A;  /* ".me" portion — terracotta brick */
+```
+
+**Struttura del logo:**
+
+```
+opad  .me
+────  ───
+  ↑    ↑
+  │    └── #B5453A (terracotta)
+  └─────── #FFFFFF (bianco)
+```
+
+- **"opad"** → `#FFFFFF` (bianco)
+- **"."** → `#B5453A` (terracotta)
+- **"me"** → `#B5453A` (terracotta)
+
+**Nota icona:** il logo finale prevede un'icona SVG (Uomo Vitruviano in cerchio) che sostituisce visivamente la "o" di "opad". L'asset SVG non è ancora disponibile — nel frattempo renderizzare il wordmark come testo `"opad.me"` con i colori sopra.
+
+**Regole d'uso wordmark:**
+- Il colore `#B5453A` è **esclusivamente del wordmark** — non usarlo in UI, pulsanti o grafici
+- Su sfondo `#0F2F33` (nav/sidebar): usare il wordmark completo con i colori sopra
+- Quando disponibile, l'icona SVG è sempre in bianco — mai colorata con i token di sistema
 
 ---
 
@@ -476,6 +507,8 @@ Accent (errors):     #E24A4A
 Graph positive:      #7DA3A0
 Graph neutral:       #8C9496
 Graph decline:       #BFA37A
+Wordmark "opad":     #FFFFFF  ← wordmark only
+Wordmark ".me":      #B5453A  ← wordmark only, never in UI
 
 Font:        Inter, 600/500/400
 Radius:      12px (rounded-xl)
@@ -489,4 +522,4 @@ NOT:         Gamified. Pressuring. Evaluative.
 
 ---
 
-*BetonMe Brand System v1.1 — Ready for Lovable generation*
+*opad.me Brand System v1.2 — Ready for Lovable generation*
