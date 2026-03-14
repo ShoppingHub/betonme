@@ -10,7 +10,7 @@ L'interazione principale è una **checklist rapida**: l'utente apre l'app, vede 
 
 ## Behavior
 
-Quando un utente crea un'area `health` con nome `Gym` o `Palestra` (case insensitive), l'Area Detail mostra una sezione aggiuntiva: la **Gym Card / Scheda Palestra**.
+Quando un utente crea un'area `health` con `is_gym = true` (impostato nel form Add/Edit Area — Epic 05, story-05-07), l'Area Detail mostra una sezione aggiuntiva: la **Gym Card / Scheda Palestra**.
 
 La Gym Card non sostituisce il check-in binario — quel meccanismo resta invariato per il grafico traiettoria. La Gym Card è una sezione di log strutturato che appare **sotto** il grafico, l'heatmap e il bottone check-in.
 
@@ -37,10 +37,12 @@ Gli esercizi contrassegnati come **giornalieri** (`is_daily = true`) appaiono in
 
 | Condizione | Comportamento |
 |---|---|
-| `area.type === "health"` AND nome corrisponde a `gym` o `palestra` (case insensitive) | Mostra la sezione Gym Card |
-| Qualsiasi altra area | Sezione non mostrata |
+| `area.is_gym === true` | Mostra la sezione Gym Card |
+| Qualsiasi altra area (`is_gym = false` o assente) | Sezione non mostrata |
 
 La Gym Card appare automaticamente — l'utente non deve attivarla.
+
+> ⚠️ Il riconoscimento per nome (`/^(gym|palestra)$/i`) è deprecato. Usa esclusivamente `area.is_gym`.
 
 ---
 

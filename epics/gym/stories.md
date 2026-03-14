@@ -8,9 +8,10 @@ story-11-02 → Gestione scheda: giorni, gruppi muscolari, esercizi
 story-11-03 → Sessione giornaliera: checklist e selezione giorno
 story-11-04 → Azioni esercizio: DONE, EDIT peso, DISATTIVA
 story-11-05 → Storico sessioni collassabile
+story-11-06 → Fix UX GymPlanEditor: full-screen, accordion, scroll, edit/delete gruppo, footer salva
 ```
 
-> **Dipendenze:** Richiede Epic 03 (Check-in) per il completamento automatico. Epic 04 (Area Detail) per la posizione della sezione. Epic 08 (i18n) per i label.
+> **Dipendenze:** Richiede Epic 03 (Check-in) per il completamento automatico. Epic 04 (Area Detail) per la posizione della sezione. Epic 05 (story-05-07, `is_gym`) per il rilevamento area. Epic 08 (i18n) per i label.
 
 ---
 
@@ -163,3 +164,56 @@ Continua Epic 11 di BetonMe. Aggiungi la sezione storico sessioni in fondo alla 
 **Edge case:**
 - `"1 esercizio / 1 exercise"` (singolare) se la sessione contiene 1 solo esercizio completato
 - Sessione con 0 esercizi completati → non mostrata nello storico
+
+---
+
+## story-11-06 — Fix UX GymPlanEditor ⏳
+
+Continua Epic 11 di opad.me. Correggi 4 problemi di usabilità nel `GymPlanEditor` (modale di modifica scheda palestra).
+
+### Fix 1 — Modale full-screen
+
+Il drawer `GymPlanEditor` deve coprire l'intera schermata.
+
+- Il drawer si apre come **bottom sheet full-screen** (`h-full`) con overlay scuro che blocca l'interazione con il contenuto sottostante
+- L'header del drawer rimane fisso in cima con: titolo `"Modifica scheda"` (IT) / `"Edit plan"` (EN) + icona ✕ per chiudere senza salvare
+- Il footer rimane fisso in fondo (vedi Fix 4)
+- Il contenuto centrale è scrollabile verticalmente
+
+### Fix 2 — Giorni in accordion (uno aperto alla volta)
+
+I giorni della scheda non devono essere tutti espansi contemporaneamente.
+
+- Ogni giorno è una **card collassabile** con header cliccabile: nome giorno (es. `"Giorno 1"`) + icona chevron `▼` / `▲`
+- **Un solo giorno aperto alla volta**: aprire un giorno chiude automaticamente quello precedente
+- Default all'apertura del drawer: il primo giorno è aperto, tutti gli altri chiusi
+- L'header del giorno rimane sempre visibile anche quando collassato
+- Quando un giorno è aperto, il suo contenuto (gruppi + esercizi) è visibile e scrollabile insieme al resto della pagina
+
+### Fix 3 — Scroll verticale globale
+
+- L'area centrale del drawer (tra header fisso e footer fisso) è **scrollabile verticalmente**
+- Non ci sono altezze fisse sui singoli giorni — ogni giorno aperto mostra tutto il suo contenuto
+- L'utente può scorrere liberamente tra giorni, gruppi ed esercizi
+
+### Fix 4 — Footer fisso con "Salva" e "Annulla"
+
+Sostituire l'attuale unico bottone "Annulla" con un footer a 2 azioni:
+
+- **`"Salva"` (IT) / `"Save"` (EN)** — bottone primario `bg-[#7DA3A0] text-[#0F2F33]` full-width — salva tutte le modifiche e chiude il drawer
+- **`"Annulla"` (IT) / `"Cancel"` (EN)** — link testuale sotto il bottone, centrato — scarta le modifiche e chiude il drawer
+
+Il footer è sempre visibile, non viene mai spinto fuori schermo dallo scroll.
+
+### Fix 5 — Edit e Delete sui gruppi muscolari
+
+Aggiungere azioni di modifica e cancellazione su ogni gruppo muscolare.
+
+**Sull'header di ogni gruppo muscolare**, a destra del nome, aggiungere 2 icone:
+- **✏️ (modifica)** — apre un bottom sheet con un solo campo: nome gruppo precompilato. CTA `"Salva"` / `"Save"` aggiorna il nome in silenzio
+- **🗑️ (elimina)** — mostra una conferma inline (non modale separato): `"Eliminare il gruppo e tutti i suoi esercizi?"` (IT) / `"Delete group and all its exercises?"` (EN) con 2 CTA inline: `"Elimina"` (rosso `#E24A4A`) e `"Annulla"`
+- La cancellazione elimina il gruppo e tutti gli esercizi collegati (soft delete o hard delete, a discrezione di Lovable)
+
+**Edge case:**
+- Gruppo con 0 esercizi → l'eliminazione non richiede conferma aggiuntiva, è immediata
+- Rinomina con nome vuoto → bottone "Salva" disabilitato nel bottom sheet
